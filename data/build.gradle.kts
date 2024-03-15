@@ -1,5 +1,5 @@
-import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -22,7 +22,9 @@ kotlin {
     jvm("desktop")
 
     listOf(
-        iosX64(), iosArm64(), iosSimulatorArm64()
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Data"
@@ -35,7 +37,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
-            //Koin
+            // Koin
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
@@ -51,9 +53,9 @@ kotlin {
             implementation(libs.ktor.content.negotiation)
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.logger)
-            implementation("io.ktor:ktor-client-auth:2.3.8")
+            implementation(libs.ktor.client.auth)
 
-            //Koin
+            // Koin
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
@@ -67,7 +69,7 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation("co.touchlab:stately-common:2.0.5")
+            implementation(libs.stately.common)
         }
 
         desktopMain.dependencies {
@@ -85,7 +87,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
-
 
 compose.desktop {
     application {
@@ -107,5 +108,5 @@ buildConfig {
     val piKey = properties.getProperty("API_KEY")
 
     buildConfigField("API_KEY", piKey)
-    buildConfigField("URL_BASE", "api.themoviedb.org/3/movie")
+    buildConfigField("URL_BASE", "https://api.themoviedb.org/3/movie/")
 }

@@ -3,6 +3,7 @@ package util
 import exception.DomainException
 import exception.TimeOutException
 import exception.UnknownException
+import io.github.aakira.napier.Napier
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.utils.io.errors.IOException
 
@@ -20,6 +21,7 @@ open class BaseRepository {
      * type of exception to a domain exception.
      */
     fun <T> Result<T>.onFailure(): Result<T> {
+        Napier.e("Repository", exceptionOrNull())
         return exceptionOrNull()?.let { error ->
             when (error) {
                 is IOException -> {

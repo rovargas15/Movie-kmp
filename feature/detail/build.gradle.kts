@@ -20,7 +20,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
@@ -35,7 +35,7 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
-            //Koin
+            // Koin
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-android")
@@ -51,12 +51,12 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
-            //Navigation PreCompose
+            // Navigation PreCompose
             api(libs.precompose)
-            //Viewmodel
+            // Viewmodel
             api(libs.precompose.viewmodel)
 
-            //Koin
+            // Koin
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
@@ -64,7 +64,7 @@ kotlin {
         }
 
         iosMain.dependencies {
-            implementation("co.touchlab:stately-common:2.0.5")
+            implementation(libs.stately.common)
         }
 
         desktopMain.dependencies {
@@ -87,8 +87,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
 
+    dependencies {
+        debugImplementation(libs.compose.ui.tooling)
+    }
+}
 
 compose.desktop {
     application {

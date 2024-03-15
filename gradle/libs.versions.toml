@@ -22,6 +22,8 @@ napier = "2.7.1"
 precompose = "1.5.10"
 realm = "1.11.0"
 buildconfig = "5.3.5"
+statelyCommon = "2.0.5"
+compose-constraintlayout = "1.0.1"
 
 [libraries]
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
@@ -42,6 +44,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -54,6 +57,7 @@ precompose-molecule = { module = "moe.tlaster:precompose-molecule", version.ref 
 precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
 precompose = { module = "moe.tlaster:precompose", version.ref = "precompose" }
 realm-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+stately-common = { module = "co.touchlab:stately-common", version.ref = "statelyCommon" }
 
 
 [plugins]

@@ -9,5 +9,9 @@ sealed interface MovieUiState {
 
     data class Success(val movies: List<Movie>) : MovieUiState
 
+    data class OnShowDetail(val movie: Movie) : MovieUiState
+
+    data class OnShowOptionMenu(val bottomNavRoute: BottomNavRoute) : MovieUiState
+
     data object Error : MovieUiState
 }

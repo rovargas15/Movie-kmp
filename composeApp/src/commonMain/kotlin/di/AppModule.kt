@@ -1,6 +1,5 @@
 package di
 
-import di.featureDiscoverModule
 import org.koin.dsl.module
 
 val featureMovie =

@@ -1,5 +1,59 @@
 package detail
 
+import Arg
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import model.Movie
+import moe.tlaster.precompose.navigation.BackStackEntry
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
+import usecase.GetMovieById
 
-class DetailViewmodel : ViewModel()
+class DetailViewmodel(
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val backStackEntry: BackStackEntry,
+    private val getMovieById: GetMovieById,
+) : ViewModel() {
+    private val movieId get() = backStackEntry.pathMap[Arg.ID]
+    private val movieUiState = MutableStateFlow<DetailMovieUiState>(DetailMovieUiState.Init)
+
+    var movie: Movie? by mutableStateOf(null)
+        private set
+
+    val uiState: StateFlow<DetailMovieUiState>
+        get() = movieUiState
+
+    fun managerAction(action: DetailMovieAction) {
+        when (action) {
+            DetailMovieAction.CleanStatus -> {
+                movieUiState.value = DetailMovieUiState.Init
+            }
+
+            DetailMovieAction.OnBackPress -> {
+                movieUiState.value = DetailMovieUiState.OnBack
+            }
+        }
+    }
+
+    fun getMovieById() {
+        viewModelScope.launch {
+            movieUiState.value = DetailMovieUiState.Loading
+            movieId?.let { id ->
+                getMovieById.invoke(id).fold(
+                    onSuccess = {
+                        movie = it
+                        movieUiState.value = DetailMovieUiState.Success
+                    },
+                    onFailure = {
+                        movieUiState.value = DetailMovieUiState.Error
+                    },
+                )
+            }
+        }
+    }
+}

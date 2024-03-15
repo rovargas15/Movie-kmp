@@ -1,8 +1,9 @@
 package remote.model
 
+import io.realm.kotlin.ext.toRealmList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import model.Movie
+import local.entity.MovieEntity
 
 @Serializable
 data class MovieResponse(
@@ -35,12 +36,14 @@ data class MovieResponse(
     @SerialName("vote_count")
     val voteCount: Int,
 ) {
-    fun toDomain() =
-        Movie(
+    fun toEntity() =
+        MovieEntity(
+            id = 0,
+            movieId = id,
+            category = "",
             adult = adult,
             backdropPath = backdropPath,
-            genreIds = genreIds,
-            id = id,
+            genreIds = genreIds.toRealmList(),
             originalLanguage = originalLanguage,
             originalTitle = originalTitle,
             overview = overview,

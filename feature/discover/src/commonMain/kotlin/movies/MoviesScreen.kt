@@ -22,78 +22,123 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import model.Movie
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleObserver
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 
 @Composable
 fun ScreenMovies(
-    route: String,
-    onSelectOption: (BottomNavRoute) -> Unit,
-    onSelectMovie: (Movie) -> Unit,
+    viewmodel: MoviesViewmodel,
+    onSelectMenu: (BottomNavRoute) -> Unit,
+    onViewDetail: (Movie) -> Unit,
 ) {
-    val viewmodel = koinViewModel(MoviesViewmodel::class)
-    LifecycleRegistry().addObserver(
-        observer = object : LifecycleObserver {
-            override fun onStateChanged(state: Lifecycle.State) {
-                if (state == Lifecycle.State.Initialized) {
-                    viewmodel.getMovies(route)
-                }
-            }
+    val movies = remember { mutableStateOf(listOf<Movie>()) }
+
+    ManagerState(
+        viewmodel = viewmodel,
+        movies = movies,
+        onSelectMenu = onSelectMenu,
+        onViewDetail = onViewDetail,
+    )
+
+    val action: (MovieAction) -> Unit = {
+        viewmodel.managerAction(it)
+    }
+
+    TopBarMovie(
+        bottomNavRoute = viewmodel.bottomNavRoute,
+        content = { paddingValues ->
+            MoviesList(
+                paddingValues = paddingValues,
+                movies = movies.value,
+                action = action,
+            )
         },
+        movieAction = action,
     )
-    val state by viewmodel.uiState.collectAsStateWithLifecycle()
-    ContentMovie(
-        state = state,
-        onSelectOption = onSelectOption,
-        route = route,
-        onSelectMovie = onSelectMovie,
-    )
+}
+
+@Composable
+private fun ManagerState(
+    viewmodel: MoviesViewmodel,
+    movies: MutableState<List<Movie>>,
+    onSelectMenu: (BottomNavRoute) -> Unit,
+    onViewDetail: (Movie) -> Unit,
+) {
+    DisposableEffect(Unit) {
+        onDispose {
+            viewmodel.managerAction(MovieAction.CleanStatus)
+        }
+    }
+
+    val state by viewmodel.uiState.collectAsState()
+
+    when (state) {
+        is MovieUiState.Init -> {
+            viewmodel.managerAction(MovieAction.Init)
+        }
+
+        is MovieUiState.Loading -> {
+            Loading()
+        }
+
+        is MovieUiState.Success -> {
+            val success = (state as MovieUiState.Success)
+            movies.value = success.movies
+        }
+
+        is MovieUiState.Error -> {
+        }
+
+        is MovieUiState.OnShowDetail -> {
+            val detail = (state as MovieUiState.OnShowDetail)
+            LaunchedEffect(Unit) {
+                onViewDetail(detail.movie)
+            }
+        }
+
+        is MovieUiState.OnShowOptionMenu -> {
+            val menu = (state as MovieUiState.OnShowOptionMenu)
+            LaunchedEffect(Unit) {
+                onSelectMenu(menu.bottomNavRoute)
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ContentMovie(
-    state: MovieUiState,
-    onSelectOption: (BottomNavRoute) -> Unit,
-    route: String,
-    onSelectMovie: (Movie) -> Unit,
+private fun TopBarMovie(
+    bottomNavRoute: BottomNavRoute,
+    content: @Composable (PaddingValues) -> Unit,
+    movieAction: (MovieAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Películas $route") })
+            TopAppBar(title = { Text(bottomNavRoute.label) })
         },
         bottomBar = {
-            BottomNavigationBar(onSelectOption, route)
+            BottomNavigationBar(
+                movieAction = movieAction,
+                bottomNavRoute = bottomNavRoute,
+            )
         },
-        content = {
-            when (state) {
-                is MovieUiState.Success -> {
-                    MoviesList(it, state.movies, onSelectMovie)
-                }
-
-                is MovieUiState.Error -> {
-                }
-
-                else -> {
-                    Loading()
-                }
-            }
-        },
+        content = content,
     )
 }
 
 @Composable
 private fun BottomNavigationBar(
-    onSelectOption: (BottomNavRoute) -> Unit,
-    route: String,
+    movieAction: (MovieAction) -> Unit,
+    bottomNavRoute: BottomNavRoute,
 ) {
     BottomAppBar(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -102,8 +147,8 @@ private fun BottomNavigationBar(
         ) {
             bottomNavItems.forEach { item ->
                 NavigationBarItem(
-                    selected = route == item.route,
-                    onClick = { onSelectOption(item) },
+                    selected = bottomNavRoute.route == item.route,
+                    onClick = { movieAction(MovieAction.OnSelectMenu(item)) },
                     label = {
                         Text(
                             text = item.label,
@@ -126,7 +171,7 @@ private fun BottomNavigationBar(
 private fun MoviesList(
     paddingValues: PaddingValues,
     movies: List<Movie>,
-    onSelectMovie: (Movie) -> Unit,
+    action: (MovieAction) -> Unit,
 ) {
     LazyVerticalGrid(
         GridCells.Fixed(2),
@@ -135,7 +180,7 @@ private fun MoviesList(
         modifier = Modifier.padding(paddingValues).padding(start = 8.dp, end = 8.dp),
     ) {
         items(movies) {
-            MovieItem(it, onSelectMovie)
+            MovieItem(it, action)
         }
     }
 }
@@ -143,12 +188,13 @@ private fun MoviesList(
 @Composable
 private fun MovieItem(
     movie: Movie,
-    onSelectMovie: (Movie) -> Unit,
+    action: (MovieAction) -> Unit,
 ) {
     Card(
-        modifier = Modifier.clickable {
-            onSelectMovie(movie)
-        },
+        modifier =
+            Modifier.clickable {
+                action(MovieAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())

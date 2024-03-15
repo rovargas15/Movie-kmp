@@ -1,10 +1,14 @@
 import androidx.compose.runtime.Composable
+import detail.DetailViewmodel
 import detail.ScreenDetailMovie
+import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.transition.NavTransition
+import movies.MoviesViewmodel
 import movies.ScreenMovies
+import movies.bottomNavItems
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun NavigatorApp(navigator: Navigator) {
@@ -18,47 +22,69 @@ fun NavigatorApp(navigator: Navigator) {
 }
 
 fun RouteBuilder.home(navigator: Navigator) {
-    scene(route = Router.POPULAR, navTransition = NavTransition()) {
+    scene(route = Router.POPULAR) {
+        val viewmodel =
+            koinViewModel(MoviesViewmodel::class) {
+                parametersOf(bottomNavItems.first())
+            }
+
         ScreenMovies(
-            route = Router.POPULAR,
-            onSelectOption = {
+            viewmodel = viewmodel,
+            onSelectMenu = {
                 navigator.navigate(it.route)
             },
-            onSelectMovie = {
-                navigator.navigate(Router.DETAIL_MOVIE)
+            onViewDetail = {
+                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
         )
     }
 
-    scene(route = Router.TOP_RATED, navTransition = NavTransition()) {
+    scene(route = Router.TOP_RATED) {
+        val viewmodel =
+            koinViewModel(MoviesViewmodel::class) {
+                parametersOf(bottomNavItems[1])
+            }
+
         ScreenMovies(
-            Router.TOP_RATED,
-            onSelectOption = {
+            viewmodel = viewmodel,
+            onSelectMenu = {
                 navigator.navigate(it.route)
             },
-            onSelectMovie = {
-                navigator.navigate(Router.DETAIL_MOVIE)
+            onViewDetail = {
+                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
         )
     }
 
-    scene(route = Router.UPCOMING, navTransition = NavTransition()) {
+    scene(route = Router.UPCOMING) {
+        val viewmodel =
+            koinViewModel(MoviesViewmodel::class) {
+                parametersOf(bottomNavItems[2])
+            }
+
         ScreenMovies(
-            Router.UPCOMING,
-            onSelectOption = {
+            viewmodel = viewmodel,
+            onSelectMenu = {
                 navigator.navigate(it.route)
             },
-            onSelectMovie = {
-                navigator.navigate(Router.DETAIL_MOVIE)
+            onViewDetail = {
+                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
         )
     }
 }
 
 fun RouteBuilder.detail(navigator: Navigator) {
-    scene(route = Router.DETAIL_MOVIE, navTransition = NavTransition()) {
-        ScreenDetailMovie {
-            navigator.goBack()
-        }
+    scene(route = "${Router.DETAIL_MOVIE}{${Arg.ID}}") {
+        val detailViewmodel =
+            koinViewModel(DetailViewmodel::class) {
+                parametersOf(it)
+            }
+        ScreenDetailMovie(
+            detailViewmodel = detailViewmodel,
+            onBackPress = {
+                navigator.goBack()
+            },
+        )
     }
 }
