@@ -37,6 +37,9 @@ class DetailViewmodel(
             DetailMovieAction.OnBackPress -> {
                 movieUiState.value = DetailMovieUiState.OnBack
             }
+            is DetailMovieAction.AddFavorite -> {
+                // agrega logica
+            }
         }
     }
 

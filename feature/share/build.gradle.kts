@@ -20,7 +20,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "share"
@@ -34,6 +34,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.compose.ui.tooling)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -68,7 +69,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
 
 compose.desktop {
     application {

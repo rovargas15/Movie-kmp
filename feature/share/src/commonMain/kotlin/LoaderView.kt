@@ -3,7 +3,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,6 +19,10 @@ import androidx.compose.ui.window.DialogProperties
 import kottieComposition.KottieCompositionSpec
 import kottieComposition.animateKottieCompositionAsState
 import kottieComposition.rememberKottieComposition
+import movie.feature.share.generated.resources.Res
+import movie.feature.share.generated.resources.ic_movie
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Loading(modifier: Modifier = Modifier) {
@@ -22,8 +30,37 @@ fun Loading(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize(),
     ) {
-        CircularProgressIndicator()
+        val composition =
+            rememberKottieComposition(
+                spec = KottieCompositionSpec.File("files/loader.json"),
+            )
+
+        val animationState by animateKottieCompositionAsState(
+            composition = composition,
+            isPlaying = true,
+            restartOnPlay = true,
+        )
+
+        KottieAnimation(
+            composition = composition,
+            progress = { animationState.progress },
+            modifier = modifier,
+        )
     }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun iconLogo(modifier: Modifier) {
+    Icon(
+        modifier = modifier,
+        tint = Color.Red,
+        painter =
+            painterResource(
+                resource = Res.drawable.ic_movie,
+            ),
+        contentDescription = "Logo",
+    )
 }
 
 @Composable

@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -127,11 +128,27 @@ private fun ContentMovieDetail(
                 Icon(
                     modifier =
                         Modifier.size(35.dp)
-                            .background(Color.LightGray.copy(0.4f), shape = CircleShape),
+                            .background(Color.LightGray.copy(0.2f), shape = CircleShape),
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Volver",
                 )
             }
+
+            IconButton(
+                modifier =
+                    Modifier.padding(10.dp).align(Alignment.TopEnd),
+                onClick = {
+                    action(DetailMovieAction.AddFavorite(movie = movie!!))
+                },
+            ) {
+                Icon(
+                    modifier =
+                        Modifier.size(35.dp),
+                    imageVector = Icons.Filled.FavoriteBorder,
+                    contentDescription = "favorite",
+                )
+            }
+
             Row(
                 modifier =
                     Modifier.align(Alignment.CenterStart)

@@ -45,7 +45,6 @@ kotlin {
             implementation(projects.domain)
             implementation(projects.feature.detail)
             implementation(projects.feature.discover)
-            implementation(projects.feature.favorite)
             implementation(projects.feature.search)
             implementation(projects.feature.share)
             implementation(compose.runtime)

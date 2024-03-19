@@ -1,9 +1,16 @@
 package movies
 
+import Category.POPULAR
+import Category.TOP_RATED
+import Category.UPCOMING
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import model.Movie
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import usecase.GetMovieByCategory
@@ -17,11 +24,32 @@ class MoviesViewmodel(
     val uiState: StateFlow<MovieUiState>
         get() = movieUiState
 
-    private fun getMovies() {
-        viewModelScope.launch(coroutineDispatcher) {
-            getMovieByCategory.invoke(bottomNavRoute.route).fold(
+    var moviesPopular by mutableStateOf(listOf<Movie>())
+        private set
+
+    var moviesTop by mutableStateOf(listOf<Movie>())
+        private set
+
+    var moviesUpComing by mutableStateOf(listOf<Movie>())
+        private set
+
+    private fun getMovies(category: String) {
+        viewModelScope.launch {
+            getMovieByCategory.invoke(category).fold(
                 onSuccess = {
-                    movieUiState.value = MovieUiState.Success(it.results)
+                    when (category) {
+                        POPULAR -> {
+                            moviesPopular = it.results
+                        }
+                        TOP_RATED -> {
+                            moviesTop = it.results
+                        }
+
+                        UPCOMING -> {
+                            moviesUpComing = it.results
+                        }
+                    }
+                    movieUiState.value = MovieUiState.Success
                 },
                 onFailure = {
                     movieUiState.value = MovieUiState.Error
@@ -46,7 +74,9 @@ class MoviesViewmodel(
                 movieUiState.value = MovieUiState.OnShowDetail(action.movie)
             }
             MovieAction.Init -> {
-                getMovies()
+                getMovies(POPULAR)
+                getMovies(TOP_RATED)
+                getMovies(UPCOMING)
             }
         }
     }

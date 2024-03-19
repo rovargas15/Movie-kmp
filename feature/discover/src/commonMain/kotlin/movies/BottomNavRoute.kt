@@ -1,9 +1,9 @@
 package movies
 
+import Router
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomNavRoute(
@@ -15,18 +15,13 @@ data class BottomNavRoute(
 val bottomNavItems =
     listOf(
         BottomNavRoute(
-            route = Router.POPULAR,
+            route = Router.DISCOVER,
             icon = Icons.Default.Home,
             label = "Popular",
         ),
         BottomNavRoute(
-            route = Router.TOP_RATED,
-            icon = Icons.Default.Search,
-            label = "Mejor valorado",
-        ),
-        BottomNavRoute(
-            route = Router.UPCOMING,
-            icon = Icons.Default.AccountCircle,
-            label = "Próximamente",
+            route = Router.FAVORITE,
+            icon = Icons.Default.Favorite,
+            label = "Favorito",
         ),
     )

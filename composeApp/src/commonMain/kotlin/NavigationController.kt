@@ -1,10 +1,17 @@
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import detail.DetailViewmodel
 import detail.ScreenDetailMovie
+import favorite.FavoriteViewmodel
+import favorite.ScreenFavorite
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import movies.MoviesViewmodel
 import movies.ScreenMovies
 import movies.bottomNavItems
@@ -14,7 +21,8 @@ import org.koin.core.parameter.parametersOf
 fun NavigatorApp(navigator: Navigator) {
     NavHost(
         navigator = navigator,
-        initialRoute = Router.POPULAR,
+        initialRoute = Router.DISCOVER,
+        persistNavState = true,
     ) {
         home(navigator)
         detail(navigator)
@@ -22,10 +30,17 @@ fun NavigatorApp(navigator: Navigator) {
 }
 
 fun RouteBuilder.home(navigator: Navigator) {
-    scene(route = Router.POPULAR) {
+    scene(
+        route = Router.DISCOVER,
+        navTransition =
+            NavTransition(
+                createTransition = slideInHorizontally(),
+                destroyTransition = slideOutHorizontally(),
+            ),
+    ) {
         val viewmodel =
             koinViewModel(MoviesViewmodel::class) {
-                parametersOf(bottomNavItems.first())
+                parametersOf(bottomNavItems[0])
             }
 
         ScreenMovies(
@@ -39,30 +54,22 @@ fun RouteBuilder.home(navigator: Navigator) {
         )
     }
 
-    scene(route = Router.TOP_RATED) {
+    scene(
+        route = Router.FAVORITE,
+        navTransition =
+            NavTransition(
+                createTransition =
+                    slideIn(
+                        initialOffset = { IntOffset(it.width, 0) },
+                    ),
+                destroyTransition = slideOutHorizontally(),
+            ),
+    ) {
         val viewmodel =
-            koinViewModel(MoviesViewmodel::class) {
+            koinViewModel(FavoriteViewmodel::class) {
                 parametersOf(bottomNavItems[1])
             }
-
-        ScreenMovies(
-            viewmodel = viewmodel,
-            onSelectMenu = {
-                navigator.navigate(it.route)
-            },
-            onViewDetail = {
-                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
-            },
-        )
-    }
-
-    scene(route = Router.UPCOMING) {
-        val viewmodel =
-            koinViewModel(MoviesViewmodel::class) {
-                parametersOf(bottomNavItems[2])
-            }
-
-        ScreenMovies(
+        ScreenFavorite(
             viewmodel = viewmodel,
             onSelectMenu = {
                 navigator.navigate(it.route)

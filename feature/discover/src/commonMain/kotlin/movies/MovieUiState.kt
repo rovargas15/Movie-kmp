@@ -7,7 +7,7 @@ sealed interface MovieUiState {
 
     data object Loading : MovieUiState
 
-    data class Success(val movies: List<Movie>) : MovieUiState
+    data object Success : MovieUiState
 
     data class OnShowDetail(val movie: Movie) : MovieUiState
 

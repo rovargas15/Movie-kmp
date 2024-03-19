@@ -1,24 +1,20 @@
-package movies
+package favorite
 
 import LoaderImage
 import Loading
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,15 +29,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import model.Movie
+import movies.BottomNavRoute
+import movies.bottomNavItems
 
 @Composable
-fun ScreenMovies(
-    viewmodel: MoviesViewmodel,
+fun ScreenFavorite(
+    viewmodel: FavoriteViewmodel,
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
@@ -51,93 +47,64 @@ fun ScreenMovies(
         onViewDetail = onViewDetail,
     )
 
-    val action: (MovieAction) -> Unit = {
+    val action: (FavoriteAction) -> Unit = {
         viewmodel.managerAction(it)
     }
 
     TopBarMovie(
         bottomNavRoute = viewmodel.bottomNavRoute,
         content = { paddingValues ->
-            Column(
-                modifier =
-                    Modifier.padding(paddingValues)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                TextCategory("Popular")
-                MoviesList(
-                    movies = viewmodel.moviesPopular,
-                    action = action,
-                )
-
-                TextCategory("Mejor valorado")
-                MoviesList(
-                    movies = viewmodel.moviesTop,
-                    action = action,
-                )
-
-                TextCategory("Próximamente")
-                MoviesList(
-                    movies = viewmodel.moviesUpComing,
-                    action = action,
-                )
-            }
+            MoviesList(
+                modifier = Modifier.padding(paddingValues),
+                movies = viewmodel.moviesFavorite,
+                action = action,
+            )
         },
-        movieAction = action,
-    )
-}
-
-@Composable
-private fun TextCategory(title: String) {
-    Text(
-        modifier = Modifier.padding(start = 10.dp),
-        text = title,
-        style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
+        action = action,
     )
 }
 
 @Composable
 private fun ManagerState(
-    viewmodel: MoviesViewmodel,
+    viewmodel: FavoriteViewmodel,
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
     DisposableEffect(Unit) {
         onDispose {
-            viewmodel.managerAction(MovieAction.CleanStatus)
+            viewmodel.managerAction(FavoriteAction.CleanStatus)
         }
     }
 
     val state by viewmodel.uiState.collectAsState()
 
     when (state) {
-        is MovieUiState.Init -> {
-            viewmodel.managerAction(MovieAction.Init)
+        is FavoriteUiState.Init -> {
+            viewmodel.managerAction(FavoriteAction.Init)
         }
 
-        is MovieUiState.Loading -> {
+        is FavoriteUiState.Loading -> {
             Loading()
         }
 
-        is MovieUiState.Error -> {
+        is FavoriteUiState.Error -> {
         }
 
-        is MovieUiState.OnShowDetail -> {
-            val detail = (state as MovieUiState.OnShowDetail)
+        is FavoriteUiState.OnShowDetail -> {
+            val detail = (state as FavoriteUiState.OnShowDetail)
             LaunchedEffect(Unit) {
                 onViewDetail(detail.movie)
             }
         }
 
-        is MovieUiState.OnShowOptionMenu -> {
-            val menu = (state as MovieUiState.OnShowOptionMenu)
+        is FavoriteUiState.Success -> {
+        }
+
+        is FavoriteUiState.OnShowOptionMenu -> {
+            val menu = (state as FavoriteUiState.OnShowOptionMenu)
             LaunchedEffect(Unit) {
                 onSelectMenu(menu.bottomNavRoute)
             }
-        }
-
-        is MovieUiState.Success -> {
         }
     }
 }
@@ -147,7 +114,7 @@ private fun ManagerState(
 private fun TopBarMovie(
     bottomNavRoute: BottomNavRoute,
     content: @Composable (PaddingValues) -> Unit,
-    movieAction: (MovieAction) -> Unit,
+    action: (FavoriteAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -157,7 +124,7 @@ private fun TopBarMovie(
         },
         bottomBar = {
             BottomNavigationBar(
-                movieAction = movieAction,
+                action = action,
                 bottomNavRoute = bottomNavRoute,
             )
         },
@@ -167,7 +134,7 @@ private fun TopBarMovie(
 
 @Composable
 private fun BottomNavigationBar(
-    movieAction: (MovieAction) -> Unit,
+    action: (FavoriteAction) -> Unit,
     bottomNavRoute: BottomNavRoute,
 ) {
     BottomAppBar(modifier = Modifier.fillMaxWidth()) {
@@ -178,7 +145,7 @@ private fun BottomNavigationBar(
             bottomNavItems.forEach { item ->
                 NavigationBarItem(
                     selected = bottomNavRoute.route == item.route,
-                    onClick = { movieAction(MovieAction.OnSelectMenu(item)) },
+                    onClick = { action(FavoriteAction.OnSelectMenu(item)) },
                     label = {
                         Text(
                             text = item.label,
@@ -200,32 +167,32 @@ private fun BottomNavigationBar(
 @Composable
 private fun MoviesList(
     movies: List<Movie>,
-    action: (MovieAction) -> Unit,
+    action: (FavoriteAction) -> Unit,
+    modifier: Modifier,
 ) {
-    LazyRow(
-        modifier =
-            Modifier
-                .scrollable(state = rememberScrollState(), orientation = Orientation.Horizontal)
-                .height(250.dp),
-    ) {
-        items(movies) {
-            MovieItem(it, action)
-        }
-    }
+    LazyVerticalStaggeredGrid(
+        modifier = modifier,
+        columns = StaggeredGridCells.Adaptive(200.dp),
+        verticalItemSpacing = 4.dp,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        content = {
+            items(movies) {
+                MovieItem(it, action)
+            }
+        },
+    )
 }
 
 @Composable
 private fun MovieItem(
     movie: Movie,
-    action: (MovieAction) -> Unit,
+    action: (FavoriteAction) -> Unit,
 ) {
     Card(
         modifier =
-            Modifier
-                .padding(start = 10.dp)
-                .clickable {
-                    action(MovieAction.OnSelectMovie(movie))
-                },
+            Modifier.padding(start = 10.dp).clickable {
+                action(FavoriteAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())
