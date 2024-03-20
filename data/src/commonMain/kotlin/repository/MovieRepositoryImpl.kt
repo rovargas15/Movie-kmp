@@ -3,6 +3,8 @@ package repository
 import local.datasource.MovieDatasource
 import model.Movie
 import model.MovieBase
+import model.MovieDetail
+import model.MovieImage
 import remote.datasource.MovieDataSource
 import util.BaseRepository
 
@@ -31,5 +33,15 @@ class MovieRepositoryImpl(
     override suspend fun getMovieById(id: String): Result<Movie?> =
         launchResultSafe {
             datasourceLocal.findById(id)?.toDomain()
+        }
+
+    override suspend fun getMovieByIdRemote(id: Int): Result<MovieDetail> =
+        launchResultSafe {
+            dataSourceRemote.getMovieById(id).toDomain()
+        }
+
+    override suspend fun getMovieImageById(id: Int): Result<MovieImage> =
+        launchResultSafe {
+            dataSourceRemote.getImageById(id).toDomain()
         }
 }

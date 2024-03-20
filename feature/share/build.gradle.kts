@@ -47,6 +47,7 @@ kotlin {
             implementation("io.github.ismai117:kottie:1.5.3")
             api("io.github.qdsfdhvh:image-loader:1.7.8")
             api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.8")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

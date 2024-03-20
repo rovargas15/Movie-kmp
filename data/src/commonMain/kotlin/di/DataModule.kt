@@ -15,8 +15,10 @@ import remote.api.MovieApi
 import remote.datasource.MovieDataSource
 import repository.MovieRepository
 import repository.MovieRepositoryImpl
+import usecase.GetLocalMovieById
 import usecase.GetMovieByCategory
-import usecase.GetMovieById
+import usecase.GetMovieImageById
+import usecase.GetRemoteMovieById
 
 val dataModule =
     module {
@@ -32,7 +34,11 @@ val dataModule =
 
         factoryOf(::GetMovieByCategory)
 
-        factoryOf(::GetMovieById)
+        factoryOf(::GetLocalMovieById)
+
+        factoryOf(::GetRemoteMovieById)
+
+        factoryOf(::GetMovieImageById)
 
         single {
             Realm.open(realmConfig)

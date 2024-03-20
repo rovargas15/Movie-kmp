@@ -9,7 +9,9 @@ val featureDetailModule =
         factory { (backStackEntry: BackStackEntry) ->
             DetailViewmodel(
                 coroutineDispatcher = get(),
-                getMovieById = get(),
+                getLocalMovieById = get(),
+                getRemoteMovieById = get(),
+                getMovieImageById = get(),
                 backStackEntry = backStackEntry,
             )
         }

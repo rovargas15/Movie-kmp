@@ -1,8 +1,8 @@
 package detail
 
 import LoaderImage
-import Loading
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -33,11 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import model.Movie
+import model.MovieDetail
+import model.MovieImage
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import toDateFormat
+import toHour
+import toVote
 import kotlin.math.min
 
 @Composable
@@ -52,6 +61,8 @@ fun ScreenDetailMovie(
             detailViewmodel.managerAction(it)
         },
         movie = detailViewmodel.movie,
+        movieDetail = detailViewmodel.movieDetail,
+        movieImage = detailViewmodel.movieImage,
     )
 }
 
@@ -65,7 +76,7 @@ private fun ManagerState(
             object : LifecycleObserver {
                 override fun onStateChanged(state: Lifecycle.State) {
                     if (state == Lifecycle.State.Initialized) {
-                        viewmodel.getMovieById()
+                        viewmodel.getData()
                     }
                 }
             },
@@ -79,12 +90,7 @@ private fun ManagerState(
 
     val state by viewmodel.uiState.collectAsState()
     when (state) {
-        DetailMovieUiState.Error -> {
-        }
         DetailMovieUiState.Init -> {
-        }
-        DetailMovieUiState.Loading -> {
-            Loading()
         }
         DetailMovieUiState.OnBack -> {
             LaunchedEffect(Unit) {
@@ -100,9 +106,14 @@ private fun ManagerState(
 private fun ContentMovieDetail(
     action: (DetailMovieAction) -> Unit,
     movie: Movie?,
+    movieDetail: MovieDetail?,
+    movieImage: MovieImage?,
 ) {
     val scrollState = rememberScrollState()
-    Column(modifier = Modifier.verticalScroll(scrollState)) {
+    Column(
+        modifier = Modifier.verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Box {
             LoaderImage(
                 url = movie?.backdropPath ?: "",
@@ -167,29 +178,122 @@ private fun ContentMovieDetail(
                             end = 12.dp,
                         ),
                 ) {
-                    Text(text = movie?.title ?: "", style = MaterialTheme.typography.titleMedium)
-                    Text(text = movie?.releaseDate ?: "")
-
+                    Text(
+                        text = movie?.originalTitle ?: "",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
                     Row {
                         Icon(
                             modifier =
                                 Modifier.size(20.dp),
                             imageVector = Icons.Filled.Star,
                             contentDescription = "vote",
-                            tint = Color.LightGray,
+                            tint = Color(0xFFFEB800),
                         )
                         Text(
-                            text = movie?.voteAverage.toString(),
+                            text = movie?.voteAverage?.toVote() ?: "",
                             modifier = Modifier.align(Alignment.CenterVertically),
+                            style = MaterialTheme.typography.labelSmall,
                         )
                     }
+                    movieDetail?.genres?.let { genres ->
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth().height(40.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(genres) {
+                                itemGenre(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        movieDetail?.let {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.weight(1f)) {
+                    itemLabelRow("Duración")
+                    itemRow(movieDetail.runtime.toHour())
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    itemLabelRow("Estreno")
+                    itemRow(movieDetail.releaseDate.toDateFormat())
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    itemLabelRow("Lenguaje original")
+                    itemRow(movieDetail.originalLanguage)
                 }
             }
         }
 
         Text(
+            "Descripción",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
+
+        Text(
             text = movie?.overview ?: "",
-            modifier = Modifier.padding(horizontal = 12.dp).padding(top = 8.dp),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
+
+        movieImage?.backdrops?.let {
+            Text(
+                "Imagenes",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 12.dp),
+            )
+
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(it) { image ->
+                    ElevatedCard(modifier = Modifier.width(250.dp)) {
+                        LoaderImage(
+                            url = image.filePath,
+                            modifier =
+                                Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun itemLabelRow(text: String) {
+    Text(
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth(),
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+    )
+}
+
+@Composable
+private fun itemRow(text: String) {
+    Text(
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth(),
+        text = text,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.bodyLarge,
+    )
+}
+
+@Composable
+private fun itemGenre(genre: MovieDetail.Genre) {
+    Box(
+        modifier =
+            Modifier
+                .background(Color.Blue.copy(alpha = .1f), shape = CircleShape),
+    ) {
+        Text(
+            text = genre.name,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(8.dp),
         )
     }
 }
