@@ -41,9 +41,6 @@ import androidx.compose.ui.unit.dp
 import model.Movie
 import model.MovieDetail
 import model.MovieImage
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleObserver
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import toDateFormat
 import toHour
 import toVote
@@ -71,17 +68,6 @@ private fun ManagerState(
     viewmodel: DetailViewmodel,
     onBackPress: () -> Unit,
 ) {
-    LifecycleRegistry().addObserver(
-        observer =
-            object : LifecycleObserver {
-                override fun onStateChanged(state: Lifecycle.State) {
-                    if (state == Lifecycle.State.Initialized) {
-                        viewmodel.getData()
-                    }
-                }
-            },
-    )
-
     DisposableEffect(Unit) {
         onDispose {
             viewmodel.managerAction(DetailMovieAction.CleanStatus)
@@ -179,8 +165,9 @@ private fun ContentMovieDetail(
                         ),
                 ) {
                     Text(
-                        text = movie?.originalTitle ?: "",
+                        text = movie?.title ?: "",
                         style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
                     )
                     Row {
                         Icon(
@@ -278,7 +265,6 @@ private fun itemRow(text: String) {
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
         text = text,
-        fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.bodyLarge,
     )
 }

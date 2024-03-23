@@ -36,9 +36,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-android")
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(projects.domain)
@@ -50,23 +49,13 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
-            // Navigation PreCompose
-            api(libs.precompose)
             // Viewmodel
             api(libs.precompose.viewmodel)
-
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             api(libs.precompose.koin)
-
-            // Ktor
-            implementation(libs.ktor.client.core)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.ktor.serialization)
-            implementation(libs.ktor.content.negotiation)
         }
 
         iosMain.dependencies {
@@ -96,6 +85,14 @@ android {
 
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 

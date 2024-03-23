@@ -38,9 +38,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-android")
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
         }
 
         commonMain.dependencies {
@@ -54,11 +53,9 @@ kotlin {
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.logger)
             implementation(libs.ktor.client.auth)
-
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
             // realm
             implementation(libs.realm.base)
             // coroutines

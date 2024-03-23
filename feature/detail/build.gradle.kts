@@ -32,14 +32,15 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
+            implementation(libs.compose.ui.tooling)
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-android")
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
         }
+
         commonMain.dependencies {
             implementation(projects.domain)
             implementation(projects.feature.share)
@@ -50,16 +51,13 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
-            // Navigation PreCompose
-            api(libs.precompose)
             // Viewmodel
             api(libs.precompose.viewmodel)
-
+            api(libs.precompose)
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             api(libs.precompose.koin)
         }
 
@@ -90,6 +88,14 @@ android {
 
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 

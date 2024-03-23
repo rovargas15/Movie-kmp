@@ -36,43 +36,36 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-android")
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(projects.data)
             implementation(projects.domain)
             implementation(projects.feature.detail)
             implementation(projects.feature.discover)
+            api(compose.foundation)
             implementation(projects.feature.search)
             implementation(projects.feature.share)
+            api(compose.animation)
             implementation(compose.runtime)
-            implementation(compose.runtime)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
             // Log
             implementation(libs.napier)
-
-            // Navigation
-            api(libs.precompose)
-            // Viewmodel
+            // viewmodel
             api(libs.precompose.viewmodel)
-
             // Koin
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.1"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             api(libs.precompose.koin)
         }
 
         iosMain.dependencies {
-            implementation("co.touchlab:stately-common:2.0.5")
+            implementation(libs.stately.common)
         }
 
         desktopMain.dependencies {
@@ -112,6 +105,14 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 

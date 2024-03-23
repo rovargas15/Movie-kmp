@@ -20,7 +20,9 @@ import movie.feature.share.generated.resources.Res
 import movie.feature.share.generated.resources.ic_movie
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@Preview
 @Composable
 fun Loading(modifier: Modifier = Modifier) {
     Box(
@@ -38,9 +40,9 @@ fun iconLogo(modifier: Modifier) {
         modifier = modifier,
         tint = Color.Red,
         painter =
-            painterResource(
-                resource = Res.drawable.ic_movie,
-            ),
+        painterResource(
+            resource = Res.drawable.ic_movie,
+        ),
         contentDescription = "Logo",
     )
 }

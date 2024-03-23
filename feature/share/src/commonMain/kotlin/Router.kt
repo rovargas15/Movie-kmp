@@ -1,7 +1,7 @@
 object Router {
     const val DISCOVER = "discover"
     const val FAVORITE = "favorite"
-    const val PROFILE = "profile"
+    const val SEARCH = "search"
     const val DETAIL_MOVIE = "detail_movie/"
 }
 

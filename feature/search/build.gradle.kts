@@ -20,7 +20,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "share"
@@ -34,8 +34,14 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+
+            // Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            implementation(projects.domain)
+            implementation(projects.feature.share)
             implementation(compose.runtime)
             api(compose.foundation)
             api(compose.animation)
@@ -43,12 +49,19 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation("io.github.ismai117:kottie:1.5.3")
-            implementation("com.arkivanov.essenty:lifecycle:1.3.0")
-            api("io.github.qdsfdhvh:image-loader:1.7.8")
-            // optional - Moko Resources Decoder
-            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.8")
+            // Viewmodel
+            api(libs.precompose.viewmodel)
+            // Koin
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            api(libs.precompose.koin)
         }
+
+        iosMain.dependencies {
+            implementation(libs.stately.common)
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
@@ -63,8 +76,19 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
 
+    dependencies {
+        debugImplementation(libs.compose.ui.tooling)
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+}
 
 compose.desktop {
     application {
