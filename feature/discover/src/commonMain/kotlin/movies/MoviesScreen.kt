@@ -19,10 +19,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,11 +48,13 @@ fun ScreenMovies(
     viewmodel: MoviesViewmodel,
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
+    onSearchScreen: () -> Unit,
 ) {
-    ManagerState(
+    HandleState(
         viewmodel = viewmodel,
         onSelectMenu = onSelectMenu,
         onViewDetail = onViewDetail,
+        onSearchScreen = onSearchScreen,
     )
 
     val action: (MovieAction) -> Unit = {
@@ -59,10 +65,8 @@ fun ScreenMovies(
         bottomNavRoute = viewmodel.bottomNavRoute,
         content = { paddingValues ->
             Column(
-                modifier =
-                    Modifier.padding(paddingValues)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
+                modifier = Modifier.padding(paddingValues).fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 TextCategory("Popular")
@@ -98,10 +102,11 @@ private fun TextCategory(title: String) {
 }
 
 @Composable
-private fun ManagerState(
+private fun HandleState(
     viewmodel: MoviesViewmodel,
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
+    onSearchScreen: () -> Unit,
 ) {
     DisposableEffect(Unit) {
         onDispose {
@@ -139,6 +144,12 @@ private fun ManagerState(
 
         is MovieUiState.Success -> {
         }
+
+        MovieUiState.OnSearchView -> {
+            LaunchedEffect(Unit) {
+                onSearchScreen()
+            }
+        }
     }
 }
 
@@ -151,9 +162,19 @@ private fun TopBarMovie(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Movies") },
-            )
+            TopAppBar(title = { Text("Movies") }, actions = {
+                IconButton(
+                    onClick = {
+                        movieAction(MovieAction.OnSearchView)
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "Search",
+                        tint = Color.Gray,
+                    )
+                }
+            })
         },
         bottomBar = {
             BottomNavigationBar(
@@ -203,10 +224,10 @@ private fun MoviesList(
     action: (MovieAction) -> Unit,
 ) {
     LazyRow(
-        modifier =
-            Modifier
-                .scrollable(state = rememberScrollState(), orientation = Orientation.Horizontal)
-                .height(250.dp),
+        modifier = Modifier.scrollable(
+                state = rememberScrollState(),
+                orientation = Orientation.Horizontal
+            ).height(250.dp),
     ) {
         items(movies) {
             MovieItem(it, action)
@@ -220,12 +241,9 @@ private fun MovieItem(
     action: (MovieAction) -> Unit,
 ) {
     Card(
-        modifier =
-            Modifier
-                .padding(start = 10.dp)
-                .clickable {
-                    action(MovieAction.OnSelectMovie(movie))
-                },
+        modifier = Modifier.padding(start = 10.dp).clickable {
+                action(MovieAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())

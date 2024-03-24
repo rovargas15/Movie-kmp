@@ -20,10 +20,10 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64(),
+        iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "discover"
+            baseName = "common"
             isStatic = true
         }
     }
@@ -32,37 +32,15 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-
-            // Koin
-            implementation(libs.koin.core)
-            implementation(libs.koin.android)
+            implementation(libs.kotlinx.coroutines.android)
         }
+
         commonMain.dependencies {
-            implementation(projects.domain)
-            implementation(projects.common)
-            implementation(projects.feature.share)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(compose.runtime)
             api(compose.foundation)
             api(compose.animation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            // Viewmodel
-            api(libs.precompose.viewmodel)
-            // Koin
-            implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-            api(libs.precompose.koin)
         }
-
-        iosMain.dependencies {
-            implementation(libs.stately.common)
-        }
-
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
@@ -70,7 +48,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.movie.kmp.feature.discover"
+    namespace = "com.movie.kmp.common"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     packaging {
@@ -83,18 +61,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-    dependencies {
-        debugImplementation(libs.compose.ui.tooling)
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
-    }
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 compose.desktop {
@@ -103,8 +69,10 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.movie.kmp.discover"
+            packageName = "com.movie.kmp"
             packageVersion = "1.0.0"
         }
     }
 }
+
+

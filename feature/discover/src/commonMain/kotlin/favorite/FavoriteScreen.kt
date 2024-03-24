@@ -41,7 +41,7 @@ fun ScreenFavorite(
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
-    ManagerState(
+    HandleState(
         viewmodel = viewmodel,
         onSelectMenu = onSelectMenu,
         onViewDetail = onViewDetail,
@@ -65,7 +65,7 @@ fun ScreenFavorite(
 }
 
 @Composable
-private fun ManagerState(
+private fun HandleState(
     viewmodel: FavoriteViewmodel,
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,

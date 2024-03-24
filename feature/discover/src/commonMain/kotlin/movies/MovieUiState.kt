@@ -13,5 +13,7 @@ sealed interface MovieUiState {
 
     data class OnShowOptionMenu(val bottomNavRoute: BottomNavRoute) : MovieUiState
 
+    data object OnSearchView : MovieUiState
+
     data object Error : MovieUiState
 }

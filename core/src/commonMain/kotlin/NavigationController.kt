@@ -14,6 +14,8 @@ import moe.tlaster.precompose.navigation.RouteBuilder
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import movies.MoviesViewmodel
 import movies.ScreenMovies
+import movies.ScreenSearch
+import movies.SearchViewmodel
 import movies.bottomNavItems
 import org.koin.core.parameter.parametersOf
 
@@ -26,49 +28,43 @@ fun NavigatorApp(navigator: Navigator) {
     ) {
         home(navigator)
         detail(navigator)
+        search(navigator)
     }
 }
 
 fun RouteBuilder.home(navigator: Navigator) {
     scene(
         route = Router.DISCOVER,
-        navTransition =
-            NavTransition(
-                createTransition = slideInHorizontally(),
-                destroyTransition = slideOutHorizontally(),
-            ),
+        navTransition = NavTransition(
+            createTransition = slideInHorizontally(),
+            destroyTransition = slideOutHorizontally(),
+        ),
     ) {
-        val viewmodel =
-            koinViewModel(MoviesViewmodel::class) {
-                parametersOf(bottomNavItems[0])
-            }
+        val viewmodel = koinViewModel(MoviesViewmodel::class) {
+            parametersOf(bottomNavItems[0])
+        }
 
-        ScreenMovies(
-            viewmodel = viewmodel,
-            onSelectMenu = {
-                navigator.navigate(it.route)
-            },
-            onViewDetail = {
-                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
-            },
-        )
+        ScreenMovies(viewmodel = viewmodel, onSelectMenu = {
+            navigator.navigate(it.route)
+        }, onViewDetail = {
+            navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
+        }, onSearchScreen = {
+            navigator.navigate(Router.SEARCH)
+        })
     }
 
     scene(
         route = Router.FAVORITE,
-        navTransition =
-            NavTransition(
-                createTransition =
-                    slideIn(
-                        initialOffset = { IntOffset(it.width, 0) },
-                    ),
-                destroyTransition = slideOutHorizontally(),
+        navTransition = NavTransition(
+            createTransition = slideIn(
+                initialOffset = { IntOffset(it.width, 0) },
             ),
+            destroyTransition = slideOutHorizontally(),
+        ),
     ) {
-        val viewmodel =
-            koinViewModel(FavoriteViewmodel::class) {
-                parametersOf(bottomNavItems[1])
-            }
+        val viewmodel = koinViewModel(FavoriteViewmodel::class) {
+            parametersOf(bottomNavItems[1])
+        }
         ScreenFavorite(
             viewmodel = viewmodel,
             onSelectMenu = {
@@ -83,12 +79,26 @@ fun RouteBuilder.home(navigator: Navigator) {
 
 fun RouteBuilder.detail(navigator: Navigator) {
     scene(route = "${Router.DETAIL_MOVIE}{${Arg.ID}}") {
-        val detailViewmodel =
-            koinViewModel(DetailViewmodel::class) {
-                parametersOf(it)
-            }
+        val detailViewmodel = koinViewModel(DetailViewmodel::class) {
+            parametersOf(it)
+        }
         ScreenDetailMovie(
             detailViewmodel = detailViewmodel,
+            onBackPress = {
+                navigator.goBack()
+            },
+        )
+    }
+}
+
+fun RouteBuilder.search(navigator: Navigator) {
+    scene(route = Router.SEARCH) {
+        val viewmodel: SearchViewmodel = koinViewModel(SearchViewmodel::class)
+        ScreenSearch(
+            viewmodel = viewmodel,
+            onViewDetail = {
+                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
+            },
             onBackPress = {
                 navigator.goBack()
             },

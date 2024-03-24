@@ -10,4 +10,6 @@ sealed interface MovieAction {
     data class OnSelectMovie(val movie: Movie) : MovieAction
 
     data object CleanStatus : MovieAction
+
+    data object OnSearchView : MovieAction
 }

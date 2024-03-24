@@ -36,17 +36,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             // Koin
-            implementation(libs.koin.core)
             implementation(libs.koin.android)
         }
         commonMain.dependencies {
-            implementation(projects.data)
-            implementation(projects.domain)
-            implementation(projects.feature.detail)
-            implementation(projects.feature.discover)
+            implementation(projects.core)
             api(compose.foundation)
-            implementation(projects.feature.search)
-            implementation(projects.feature.share)
             api(compose.animation)
             implementation(compose.runtime)
             implementation(compose.material3)
@@ -55,8 +49,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             // Log
             implementation(libs.napier)
-            // viewmodel
-            api(libs.precompose.viewmodel)
+            // Navigation
+            api(libs.precompose)
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)

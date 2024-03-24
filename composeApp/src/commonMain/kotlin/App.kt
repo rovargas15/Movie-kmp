@@ -7,8 +7,7 @@ import org.koin.compose.KoinContext
 fun App() {
     PreComposeApp {
         KoinContext {
-            val navigator = rememberNavigator()
-            NavigatorApp(navigator)
+            NavigatorApp(rememberNavigator())
         }
     }
 }

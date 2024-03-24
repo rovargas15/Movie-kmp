@@ -1,4 +1,3 @@
-import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -6,8 +5,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.realm)
-    kotlin("plugin.serialization") version "1.9.22"
-    alias(libs.plugins.gradleBuildConfig)
 }
 
 kotlin {
@@ -27,7 +24,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Data"
+            baseName = "core"
             isStatic = true
         }
     }
@@ -38,12 +35,16 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             // Koin
-            implementation(libs.koin.core)
             implementation(libs.koin.android)
         }
 
         commonMain.dependencies {
+            implementation(projects.data)
             implementation(projects.domain)
+            implementation(projects.common)
+            implementation(projects.feature.discover)
+            implementation(projects.feature.detail)
+            implementation(projects.feature.search)
             implementation(compose.runtime)
             api(compose.foundation)
             api(compose.animation)
@@ -58,10 +59,6 @@ kotlin {
             implementation(libs.koin.core)
             // realm
             implementation(libs.realm.base)
-            // coroutines
-            implementation(libs.kotlinx.coroutines.core)
-            // Log
-            implementation(libs.napier)
         }
 
         iosMain.dependencies {
@@ -76,7 +73,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.movie.kmp.data"
+    namespace = "com.movie.kmp.core"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     compileOptions {
@@ -95,15 +92,4 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
-}
-
-buildConfig {
-    packageName("com.movie.data")
-
-    val properties = Properties()
-    properties.load(project.rootProject.file("secrets.properties").reader())
-    val piKey = properties.getProperty("API_KEY")
-
-    buildConfigField("API_KEY", piKey)
-    buildConfigField("URL_BASE", "https://api.themoviedb.org/3/")
 }

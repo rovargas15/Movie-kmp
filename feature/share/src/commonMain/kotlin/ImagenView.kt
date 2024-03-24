@@ -9,7 +9,7 @@ fun LoaderImage(
     url: String,
     modifier: Modifier,
 ) {
-    val painter = rememberImagePainter("https://image.tmdb.org/t/p/w500/" + url)
+    val painter = rememberImagePainter("https://image.tmdb.org/t/p/w500/$url")
     Image(
         modifier = modifier,
         painter = painter,

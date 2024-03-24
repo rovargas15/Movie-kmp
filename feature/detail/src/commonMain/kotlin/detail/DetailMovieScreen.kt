@@ -41,6 +41,9 @@ import androidx.compose.ui.unit.dp
 import model.Movie
 import model.MovieDetail
 import model.MovieImage
+import moe.tlaster.precompose.lifecycle.Lifecycle
+import moe.tlaster.precompose.lifecycle.LifecycleObserver
+import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import toDateFormat
 import toHour
 import toVote
@@ -51,11 +54,11 @@ fun ScreenDetailMovie(
     detailViewmodel: DetailViewmodel,
     onBackPress: () -> Unit,
 ) {
-    ManagerState(detailViewmodel, onBackPress)
+    HandleState(detailViewmodel, onBackPress)
 
     ContentMovieDetail(
         action = {
-            detailViewmodel.managerAction(it)
+            detailViewmodel.handleAction(it)
         },
         movie = detailViewmodel.movie,
         movieDetail = detailViewmodel.movieDetail,
@@ -64,13 +67,24 @@ fun ScreenDetailMovie(
 }
 
 @Composable
-private fun ManagerState(
+private fun HandleState(
     viewmodel: DetailViewmodel,
     onBackPress: () -> Unit,
 ) {
+    LifecycleRegistry().addObserver(
+        observer =
+        object : LifecycleObserver {
+            override fun onStateChanged(state: Lifecycle.State) {
+                if (state == Lifecycle.State.Initialized) {
+                    viewmodel.getData()
+                }
+            }
+        },
+    )
+
     DisposableEffect(Unit) {
         onDispose {
-            viewmodel.managerAction(DetailMovieAction.CleanStatus)
+            viewmodel.handleAction(DetailMovieAction.CleanStatus)
         }
     }
 
@@ -78,11 +92,13 @@ private fun ManagerState(
     when (state) {
         DetailMovieUiState.Init -> {
         }
+
         DetailMovieUiState.OnBack -> {
             LaunchedEffect(Unit) {
                 onBackPress()
             }
         }
+
         is DetailMovieUiState.Success -> {
         }
     }
@@ -104,28 +120,28 @@ private fun ContentMovieDetail(
             LoaderImage(
                 url = movie?.backdropPath ?: "",
                 modifier =
-                    Modifier.fillMaxWidth().height(250.dp)
-                        .graphicsLayer {
-                            alpha = min(1f, 1 - (scrollState.value / 600f))
-                            translationY = -scrollState.value * 0.1f
-                        },
+                Modifier.fillMaxWidth().height(250.dp)
+                    .graphicsLayer {
+                        alpha = min(1f, 1 - (scrollState.value / 600f))
+                        translationY = -scrollState.value * 0.1f
+                    },
             )
 
             IconButton(
                 modifier =
-                    Modifier.padding(10.dp).align(Alignment.TopStart)
-                        .graphicsLayer {
-                            alpha = min(1f, 1 - (scrollState.value / 600f))
-                            translationY = -scrollState.value * 0.1f
-                        },
+                Modifier.padding(10.dp).align(Alignment.TopStart)
+                    .graphicsLayer {
+                        alpha = min(1f, 1 - (scrollState.value / 600f))
+                        translationY = -scrollState.value * 0.1f
+                    },
                 onClick = {
                     action(DetailMovieAction.OnBackPress)
                 },
             ) {
                 Icon(
                     modifier =
-                        Modifier.size(35.dp)
-                            .background(Color.LightGray.copy(0.2f), shape = CircleShape),
+                    Modifier.size(35.dp)
+                        .background(Color.LightGray.copy(0.2f), shape = CircleShape),
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Volver",
                 )
@@ -133,14 +149,14 @@ private fun ContentMovieDetail(
 
             IconButton(
                 modifier =
-                    Modifier.padding(10.dp).align(Alignment.TopEnd),
+                Modifier.padding(10.dp).align(Alignment.TopEnd),
                 onClick = {
                     action(DetailMovieAction.AddFavorite(movie = movie!!))
                 },
             ) {
                 Icon(
                     modifier =
-                        Modifier.size(35.dp),
+                    Modifier.size(35.dp),
                     imageVector = Icons.Filled.FavoriteBorder,
                     contentDescription = "favorite",
                 )
@@ -148,8 +164,8 @@ private fun ContentMovieDetail(
 
             Row(
                 modifier =
-                    Modifier.align(Alignment.CenterStart)
-                        .padding(top = 140.dp, start = 12.dp),
+                Modifier.align(Alignment.CenterStart)
+                    .padding(top = 140.dp, start = 12.dp),
             ) {
                 Box {
                     ElevatedCard(modifier = Modifier.width(150.dp).height(220.dp)) {
@@ -158,11 +174,11 @@ private fun ContentMovieDetail(
                 }
                 Column(
                     modifier =
-                        Modifier.fillMaxWidth().padding(
-                            top = 120.dp,
-                            start = 8.dp,
-                            end = 12.dp,
-                        ),
+                    Modifier.fillMaxWidth().padding(
+                        top = 120.dp,
+                        start = 8.dp,
+                        end = 12.dp,
+                    ),
                 ) {
                     Text(
                         text = movie?.title ?: "",
@@ -172,7 +188,7 @@ private fun ContentMovieDetail(
                     Row {
                         Icon(
                             modifier =
-                                Modifier.size(20.dp),
+                            Modifier.size(20.dp),
                             imageVector = Icons.Filled.Star,
                             contentDescription = "vote",
                             tint = Color(0xFFFEB800),
@@ -240,7 +256,7 @@ private fun ContentMovieDetail(
                         LoaderImage(
                             url = image.filePath,
                             modifier =
-                                Modifier.fillMaxWidth(),
+                            Modifier.fillMaxWidth(),
                         )
                     }
                 }
@@ -273,8 +289,8 @@ private fun itemRow(text: String) {
 private fun itemGenre(genre: MovieDetail.Genre) {
     Box(
         modifier =
-            Modifier
-                .background(Color.Blue.copy(alpha = .1f), shape = CircleShape),
+        Modifier
+            .background(Color.Blue.copy(alpha = .1f), shape = CircleShape),
     ) {
         Text(
             text = genre.name,

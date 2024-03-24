@@ -40,7 +40,7 @@ class DetailViewmodel(
     val uiState: StateFlow<DetailMovieUiState>
         get() = movieUiState
 
-    fun managerAction(action: DetailMovieAction) {
+    fun handleAction(action: DetailMovieAction) {
         when (action) {
             DetailMovieAction.CleanStatus -> {
                 movieUiState.value = DetailMovieUiState.Init
@@ -49,6 +49,7 @@ class DetailViewmodel(
             DetailMovieAction.OnBackPress -> {
                 movieUiState.value = DetailMovieUiState.OnBack
             }
+
             is DetailMovieAction.AddFavorite -> {
                 // agrega logica
             }

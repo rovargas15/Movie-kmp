@@ -41,6 +41,7 @@ class MoviesViewmodel(
                         POPULAR -> {
                             moviesPopular = it.results
                         }
+
                         TOP_RATED -> {
                             moviesTop = it.results
                         }
@@ -73,10 +74,15 @@ class MoviesViewmodel(
             is MovieAction.OnSelectMovie -> {
                 movieUiState.value = MovieUiState.OnShowDetail(action.movie)
             }
+
             MovieAction.Init -> {
                 getMovies(POPULAR)
                 getMovies(TOP_RATED)
                 getMovies(UPCOMING)
+            }
+
+            MovieAction.OnSearchView -> {
+                movieUiState.value = MovieUiState.OnSearchView
             }
         }
     }

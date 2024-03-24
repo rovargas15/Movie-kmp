@@ -4,7 +4,6 @@ import Router
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomNavRoute(
@@ -24,10 +23,5 @@ val bottomNavItems =
             route = Router.FAVORITE,
             icon = Icons.Default.Favorite,
             label = "favorite",
-        ),
-        BottomNavRoute(
-            route = Router.SEARCH,
-            icon = Icons.Default.Search,
-            label = "search",
-        ),
+        )
     )

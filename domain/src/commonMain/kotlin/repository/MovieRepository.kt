@@ -13,4 +13,6 @@ interface MovieRepository {
     suspend fun getMovieByIdRemote(id: Int): Result<MovieDetail>
 
     suspend fun getMovieImageById(id: Int): Result<MovieImage>
+
+    suspend fun getSearchMovie(query: String): Result<MovieBase>
 }

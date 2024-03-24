@@ -19,38 +19,38 @@ import usecase.GetLocalMovieById
 import usecase.GetMovieByCategory
 import usecase.GetMovieImageById
 import usecase.GetRemoteMovieById
+import usecase.GetSearchMovie
 
-val dataModule =
-    module {
-        singleOf(::coroutineDispatcherProvider)
+val dataModule = module {
+    singleOf(::coroutineDispatcherProvider)
 
-        singleOf(::client)
+    singleOf(::client)
 
-        singleOf(::MovieDatasource) { bind<MovieDao>() }
+    singleOf(::MovieDatasource) { bind<MovieDao>() }
 
-        singleOf(::MovieDataSource) { bind<MovieApi>() }
+    singleOf(::MovieDataSource) { bind<MovieApi>() }
 
-        singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
+    singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
 
-        factoryOf(::GetMovieByCategory)
+    factoryOf(::GetMovieByCategory)
 
-        factoryOf(::GetLocalMovieById)
+    factoryOf(::GetLocalMovieById)
 
-        factoryOf(::GetRemoteMovieById)
+    factoryOf(::GetRemoteMovieById)
 
-        factoryOf(::GetMovieImageById)
+    factoryOf(::GetMovieImageById)
 
-        single {
-            Realm.open(realmConfig)
-        }
+    factoryOf(::GetSearchMovie)
+
+    single {
+        Realm.open(realmConfig)
     }
+}
 
 fun coroutineDispatcherProvider() = Dispatchers.IO
 
-private val realmConfig =
-    RealmConfiguration.create(
-        schema =
-            setOf(
-                MovieEntity::class,
-            ),
-    )
+private val realmConfig = RealmConfiguration.create(
+    schema = setOf(
+        MovieEntity::class,
+    ),
+)
