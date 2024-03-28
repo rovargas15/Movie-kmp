@@ -16,9 +16,10 @@ val featureDiscoverModule = module {
 
     factory { (bottomNavRoute: BottomNavRoute) ->
         FavoriteViewmodel(
-            getMovieByCategory = get(),
+            getFavoriteMovie = get(),
             bottomNavRoute = bottomNavRoute,
             coroutineDispatcher = get(),
+            updateMovie = get()
         )
     }
 }

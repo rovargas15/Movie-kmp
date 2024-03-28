@@ -11,4 +11,5 @@ class MovieDatasource(
 
     override val realm: Realm = r
     override val clazz: KClass<MovieEntity> = MovieEntity::class
+
 }

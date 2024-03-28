@@ -1,6 +1,5 @@
 package favorite
 
-import Category
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,12 +11,14 @@ import model.Movie
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import movies.BottomNavRoute
-import usecase.GetMovieByCategory
+import usecase.GetFavoriteMovie
+import usecase.UpdateMovie
 
 class FavoriteViewmodel(
     private val coroutineDispatcher: CoroutineDispatcher,
-    private val getMovieByCategory: GetMovieByCategory,
+    private val getFavoriteMovie: GetFavoriteMovie,
     val bottomNavRoute: BottomNavRoute,
+    private val updateMovie: UpdateMovie,
 ) : ViewModel() {
     private val movieUiState = MutableStateFlow<FavoriteUiState>(FavoriteUiState.Init)
     val uiState: StateFlow<FavoriteUiState>
@@ -28,28 +29,24 @@ class FavoriteViewmodel(
 
     private fun getMovies() {
         viewModelScope.launch {
-            getMovieByCategory.invoke(Category.POPULAR).fold(
-                onSuccess = {
-                    moviesFavorite = it.results
-                    movieUiState.value = FavoriteUiState.Success
-                },
-                onFailure = {
-                    movieUiState.value = FavoriteUiState.Error
-                },
-            )
+            getFavoriteMovie.invoke().collect {
+                moviesFavorite = it
+                movieUiState.value = FavoriteUiState.Success
+            }
         }
     }
 
     fun managerAction(action: FavoriteAction) {
         when (action) {
-            FavoriteAction.CleanStatus -> {
+            is FavoriteAction.CleanStatus -> {
                 movieUiState.value = FavoriteUiState.Init
             }
 
             is FavoriteAction.OnSelectMovie -> {
                 movieUiState.value = FavoriteUiState.OnShowDetail(action.movie)
             }
-            FavoriteAction.Init -> {
+
+            is FavoriteAction.Init -> {
                 getMovies()
             }
 
@@ -58,6 +55,16 @@ class FavoriteViewmodel(
                     movieUiState.value = FavoriteUiState.OnShowOptionMenu(action.navRoute)
                 }
             }
+
+            is FavoriteAction.OnRemoveFavorite -> {
+                updateMovie(action.movie)
+            }
+        }
+    }
+
+    private fun updateMovie(movie: Movie) {
+        viewModelScope.launch(coroutineDispatcher) {
+            updateMovie.invoke(movie.copy(isFavorite = !movie.isFavorite))
         }
     }
 }

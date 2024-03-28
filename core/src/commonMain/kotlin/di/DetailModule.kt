@@ -12,6 +12,7 @@ val featureDetailModule = module {
             getRemoteMovieById = get(),
             getMovieImageById = get(),
             backStackEntry = backStackEntry,
+            updateMovie = get()
         )
     }
 }

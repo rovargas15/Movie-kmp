@@ -5,7 +5,6 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import model.Movie
-import remote.model.MovieResponse
 
 class MovieEntity : RealmObject {
     @PrimaryKey
@@ -25,6 +24,7 @@ class MovieEntity : RealmObject {
     var video: Boolean = false
     var voteAverage: Double = .0
     var voteCount: Int = 0
+    var isFavorite: Boolean = false
 
     fun toDomain() =
         Movie(
@@ -43,6 +43,7 @@ class MovieEntity : RealmObject {
             video = video,
             voteAverage = voteAverage,
             voteCount = voteCount,
+            isFavorite = isFavorite,
         )
 
     constructor()
@@ -52,7 +53,7 @@ class MovieEntity : RealmObject {
         movieId: Int,
         category: String,
         adult: Boolean,
-        backdropPath: String,
+        backdropPath: String?,
         genreIds: RealmList<Int>,
         originalLanguage: String,
         originalTitle: String,
@@ -64,12 +65,13 @@ class MovieEntity : RealmObject {
         video: Boolean,
         voteAverage: Double,
         voteCount: Int,
+        isFavorite: Boolean,
     ) {
         this.id = id
         this.movieId = movieId
         this.category = category
         this.adult = adult
-        this.backdropPath = backdropPath
+        this.backdropPath = backdropPath ?: ""
         this.genreIds = genreIds
         this.originalLanguage = originalLanguage
         this.originalTitle = originalTitle
@@ -81,11 +83,6 @@ class MovieEntity : RealmObject {
         this.video = video
         this.voteAverage = voteAverage
         this.voteCount = voteCount
+        this.isFavorite = isFavorite
     }
-}
-
-fun toMovieResponseEntity(
-    movie: MovieResponse,
-    category: String,
-) = with(movie) {
 }

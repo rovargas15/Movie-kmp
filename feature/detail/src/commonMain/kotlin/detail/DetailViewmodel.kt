@@ -17,6 +17,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import usecase.GetLocalMovieById
 import usecase.GetMovieImageById
 import usecase.GetRemoteMovieById
+import usecase.UpdateMovie
 
 class DetailViewmodel(
     private val coroutineDispatcher: CoroutineDispatcher,
@@ -24,6 +25,7 @@ class DetailViewmodel(
     private val getLocalMovieById: GetLocalMovieById,
     private val getRemoteMovieById: GetRemoteMovieById,
     private val getMovieImageById: GetMovieImageById,
+    private val updateMovie: UpdateMovie,
 ) : ViewModel() {
     private val movieId get() = backStackEntry.pathMap[Arg.ID]
     private val movieUiState = MutableStateFlow<DetailMovieUiState>(DetailMovieUiState.Init)
@@ -42,16 +44,16 @@ class DetailViewmodel(
 
     fun handleAction(action: DetailMovieAction) {
         when (action) {
-            DetailMovieAction.CleanStatus -> {
+            is DetailMovieAction.CleanStatus -> {
                 movieUiState.value = DetailMovieUiState.Init
             }
 
-            DetailMovieAction.OnBackPress -> {
+            is DetailMovieAction.OnBackPress -> {
                 movieUiState.value = DetailMovieUiState.OnBack
             }
 
             is DetailMovieAction.AddFavorite -> {
-                // agrega logica
+                updateMovie(action.movie)
             }
         }
     }
@@ -63,19 +65,12 @@ class DetailViewmodel(
     private fun getMovieById() {
         viewModelScope.launch {
             movieId?.let { id ->
-                getLocalMovieById.invoke(id).fold(
-                    onSuccess = {
-                        movie = it
-                        it?.movieId?.let { id ->
-                            getRemoteMovieById(id)
-                            getImage(id)
-                        }
-                        movieUiState.value = DetailMovieUiState.Success
-                    },
-                    onFailure = {
-                        println(it.message)
-                    },
-                )
+                getLocalMovieById.invoke(id).collect {
+                    movie = it.first()
+                    getRemoteMovieById(it.first().id)
+                    getImage(it.first().id)
+                    movieUiState.value = DetailMovieUiState.Success
+                }
             }
         }
     }
@@ -105,6 +100,12 @@ class DetailViewmodel(
                     println(it.message)
                 },
             )
+        }
+    }
+
+    private fun updateMovie(movie: Movie) {
+        viewModelScope.launch(coroutineDispatcher) {
+            updateMovie.invoke(movie.copy(isFavorite = !movie.isFavorite))
         }
     }
 }

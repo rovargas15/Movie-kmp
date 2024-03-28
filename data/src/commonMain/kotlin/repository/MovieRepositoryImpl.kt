@@ -1,5 +1,7 @@
 package repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import local.datasource.MovieDatasource
 import model.Movie
 import model.MovieBase
@@ -29,9 +31,9 @@ class MovieRepositoryImpl(
         )
     }
 
-    override suspend fun getMovieById(id: String): Result<Movie?> = launchResultSafe {
-        datasourceLocal.findById(id)?.toDomain()
-    }
+    override suspend fun getMovieById(id: String) = datasourceLocal.findById(id)
+        .map { resultsChange -> resultsChange.list.map { it.toDomain() } }
+
 
     override suspend fun getMovieByIdRemote(id: Int): Result<MovieDetail> = launchResultSafe {
         dataSourceRemote.getMovieById(id).toDomain()
@@ -53,6 +55,15 @@ class MovieRepositoryImpl(
             totalPages = response.totalResults,
             totalResults = response.totalResults,
         )
+    }
+
+    override suspend fun getFavoriteMovie(): Flow<List<Movie>> =
+        datasourceLocal.streamFavorite().map { resultsChange ->
+            resultsChange.list.map { it.toDomain() }
+        }
+
+    override suspend fun updateMovie(movie: Movie) {
+        datasourceLocal.updateMovie(movie)
     }
 
 }

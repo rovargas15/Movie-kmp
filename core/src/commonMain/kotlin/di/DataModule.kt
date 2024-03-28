@@ -15,11 +15,13 @@ import remote.api.MovieApi
 import remote.datasource.MovieDataSource
 import repository.MovieRepository
 import repository.MovieRepositoryImpl
+import usecase.GetFavoriteMovie
 import usecase.GetLocalMovieById
 import usecase.GetMovieByCategory
 import usecase.GetMovieImageById
 import usecase.GetRemoteMovieById
 import usecase.GetSearchMovie
+import usecase.UpdateMovie
 
 val dataModule = module {
     singleOf(::coroutineDispatcherProvider)
@@ -41,6 +43,10 @@ val dataModule = module {
     factoryOf(::GetMovieImageById)
 
     factoryOf(::GetSearchMovie)
+
+    factoryOf(::GetFavoriteMovie)
+
+    factoryOf(::UpdateMovie)
 
     single {
         Realm.open(realmConfig)

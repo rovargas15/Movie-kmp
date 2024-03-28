@@ -43,8 +43,8 @@ interface RealmDao<T : RealmObject> {
         return realm.query(clazz, "category == $0", category).find()
     }
 
-    suspend fun findById(id: String): T? {
-        return realm.query(clazz, "id == $0", id.toInt()).first().find()
+    suspend fun findById(id: String): Flow<ResultsChange<T>> {
+        return realm.query(clazz, "id == $0", id.toInt()).asFlow()
     }
 
     suspend fun delete(entity: T) {
@@ -57,8 +57,8 @@ interface RealmDao<T : RealmObject> {
         return realm.query(clazz).asFlow()
     }
 
-    suspend fun stream(category: String): Flow<ResultsChange<T>> {
-        return realm.query(clazz, "category == $0", category).asFlow()
+    suspend fun streamFavorite(): Flow<ResultsChange<T>> {
+        return realm.query(clazz, "isFavorite == $0", true).asFlow()
     }
 
     suspend fun deleteAll() {
@@ -66,13 +66,5 @@ interface RealmDao<T : RealmObject> {
             val all = this.query(clazz).find()
             delete(all)
         }
-    }
-
-    suspend fun maxId(): T? {
-        return realm.query(clazz).max("id", clazz).find()
-    }
-
-    suspend fun isMovie(category: String): Boolean {
-        return realm.query(clazz, "category == $0", category).first().find() != null
     }
 }

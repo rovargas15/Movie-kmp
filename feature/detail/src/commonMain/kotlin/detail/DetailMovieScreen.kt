@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ElevatedCard
@@ -56,14 +57,16 @@ fun ScreenDetailMovie(
 ) {
     HandleState(detailViewmodel, onBackPress)
 
-    ContentMovieDetail(
-        action = {
-            detailViewmodel.handleAction(it)
-        },
-        movie = detailViewmodel.movie,
-        movieDetail = detailViewmodel.movieDetail,
-        movieImage = detailViewmodel.movieImage,
-    )
+    detailViewmodel.movie?.let { movie ->
+        ContentMovieDetail(
+            action = {
+                detailViewmodel.handleAction(it)
+            },
+            movie = movie,
+            movieDetail = detailViewmodel.movieDetail,
+            movieImage = detailViewmodel.movieImage,
+        )
+    }
 }
 
 @Composable
@@ -72,8 +75,7 @@ private fun HandleState(
     onBackPress: () -> Unit,
 ) {
     LifecycleRegistry().addObserver(
-        observer =
-        object : LifecycleObserver {
+        observer = object : LifecycleObserver {
             override fun onStateChanged(state: Lifecycle.State) {
                 if (state == Lifecycle.State.Initialized) {
                     viewmodel.getData()
@@ -107,7 +109,7 @@ private fun HandleState(
 @Composable
 private fun ContentMovieDetail(
     action: (DetailMovieAction) -> Unit,
-    movie: Movie?,
+    movie: Movie,
     movieDetail: MovieDetail?,
     movieImage: MovieImage?,
 ) {
@@ -118,29 +120,24 @@ private fun ContentMovieDetail(
     ) {
         Box {
             LoaderImage(
-                url = movie?.backdropPath ?: "",
-                modifier =
-                Modifier.fillMaxWidth().height(250.dp)
-                    .graphicsLayer {
-                        alpha = min(1f, 1 - (scrollState.value / 600f))
-                        translationY = -scrollState.value * 0.1f
-                    },
+                url = movie.backdropPath,
+                modifier = Modifier.fillMaxWidth().height(250.dp).graphicsLayer {
+                    alpha = min(1f, 1 - (scrollState.value / 600f))
+                    translationY = -scrollState.value * 0.1f
+                },
             )
 
             IconButton(
-                modifier =
-                Modifier.padding(10.dp).align(Alignment.TopStart)
-                    .graphicsLayer {
-                        alpha = min(1f, 1 - (scrollState.value / 600f))
-                        translationY = -scrollState.value * 0.1f
-                    },
+                modifier = Modifier.padding(10.dp).align(Alignment.TopStart).graphicsLayer {
+                    alpha = min(1f, 1 - (scrollState.value / 600f))
+                    translationY = -scrollState.value * 0.1f
+                },
                 onClick = {
                     action(DetailMovieAction.OnBackPress)
                 },
             ) {
                 Icon(
-                    modifier =
-                    Modifier.size(35.dp)
+                    modifier = Modifier.size(35.dp)
                         .background(Color.LightGray.copy(0.2f), shape = CircleShape),
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Volver",
@@ -148,47 +145,43 @@ private fun ContentMovieDetail(
             }
 
             IconButton(
-                modifier =
-                Modifier.padding(10.dp).align(Alignment.TopEnd),
+                modifier = Modifier.padding(10.dp).align(Alignment.TopEnd),
                 onClick = {
-                    action(DetailMovieAction.AddFavorite(movie = movie!!))
+                    action(DetailMovieAction.AddFavorite(movie = movie))
                 },
             ) {
                 Icon(
-                    modifier =
-                    Modifier.size(35.dp),
-                    imageVector = Icons.Filled.FavoriteBorder,
+                    modifier = Modifier.size(35.dp),
+                    imageVector = if (movie.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    tint = if (movie.isFavorite) Color.Red else Color.Black,
                     contentDescription = "favorite",
                 )
             }
 
             Row(
-                modifier =
-                Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterStart)
                     .padding(top = 140.dp, start = 12.dp),
             ) {
                 Box {
                     ElevatedCard(modifier = Modifier.width(150.dp).height(220.dp)) {
-                        LoaderImage(movie?.posterPath ?: "", modifier = Modifier.fillMaxSize())
+                        LoaderImage(movie.posterPath, modifier = Modifier.fillMaxSize())
                     }
                 }
                 Column(
-                    modifier =
-                    Modifier.fillMaxWidth().padding(
+                    modifier = Modifier.fillMaxWidth().padding(
                         top = 120.dp,
                         start = 8.dp,
                         end = 12.dp,
                     ),
                 ) {
                     Text(
-                        text = movie?.title ?: "",
+                        text = movie.title,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Row {
                         Icon(
-                            modifier =
-                            Modifier.size(20.dp),
+                            modifier = Modifier.size(20.dp),
                             imageVector = Icons.Filled.Star,
                             contentDescription = "vote",
                             tint = Color(0xFFFEB800),
@@ -238,7 +231,7 @@ private fun ContentMovieDetail(
         )
 
         Text(
-            text = movie?.overview ?: "",
+            text = movie.overview,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
@@ -255,8 +248,7 @@ private fun ContentMovieDetail(
                     ElevatedCard(modifier = Modifier.width(250.dp)) {
                         LoaderImage(
                             url = image.filePath,
-                            modifier =
-                            Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
@@ -288,9 +280,7 @@ private fun itemRow(text: String) {
 @Composable
 private fun itemGenre(genre: MovieDetail.Genre) {
     Box(
-        modifier =
-        Modifier
-            .background(Color.Blue.copy(alpha = .1f), shape = CircleShape),
+        modifier = Modifier.background(Color.Blue.copy(alpha = .1f), shape = CircleShape),
     ) {
         Text(
             text = genre.name,

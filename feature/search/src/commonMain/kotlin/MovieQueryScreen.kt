@@ -62,13 +62,11 @@ fun ScreenSearch(
     ) {
 
         SearchView(
-            query = viewmodel.query,
-            action = action
+            query = viewmodel.query, action = action
         )
 
         MoviesList(
-            movies = viewmodel.movies,
-            action = action
+            movies = viewmodel.movies, action = action
         )
     }
 }
@@ -126,11 +124,9 @@ private fun SearchView(
     Card(
         modifier = Modifier.padding(
             all = 12.dp,
-        ),
-        elevation = CardDefaults.cardElevation(8.dp)
+        ), elevation = CardDefaults.cardElevation(8.dp)
     ) {
-        OutlinedTextField(
-            value = query,
+        OutlinedTextField(value = query,
             onValueChange = {
                 action(SearchAction.QueryMovie(it))
             },

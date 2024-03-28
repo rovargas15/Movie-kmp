@@ -10,5 +10,7 @@ sealed interface FavoriteAction {
 
     data class OnSelectMovie(val movie: Movie) : FavoriteAction
 
+    data class OnRemoveFavorite(val movie: Movie) : FavoriteAction
+
     data object CleanStatus : FavoriteAction
 }
