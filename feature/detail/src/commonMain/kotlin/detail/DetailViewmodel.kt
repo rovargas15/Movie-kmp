@@ -67,8 +67,10 @@ class DetailViewmodel(
             movieId?.let { id ->
                 getLocalMovieById.invoke(id).collect {
                     movie = it.first()
-                    getRemoteMovieById(it.first().id)
-                    getImage(it.first().id)
+                    movie?.movieId?.let { movieId ->
+                        getRemoteMovieById(movieId)
+                        getImage(movieId)
+                    }
                     movieUiState.value = DetailMovieUiState.Success
                 }
             }

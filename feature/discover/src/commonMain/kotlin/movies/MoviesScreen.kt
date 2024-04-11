@@ -42,12 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import model.Movie
-import movie.feature.discover.generated.resources.Res
-import movie.feature.discover.generated.resources.title_popular
-import movie.feature.discover.generated.resources.title_top_rated
-import movie.feature.discover.generated.resources.title_upcoming
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -76,18 +71,21 @@ fun ScreenMovies(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory(stringResource(Res.string.title_popular))
+                TextCategory("Popular")
+                //TextCategory(stringResource(Res.string.title_popular))
                 MoviesList(
                     movies = viewmodel.moviesPopular,
                     action = action,
                 )
-                TextCategory(stringResource(Res.string.title_top_rated))
+                TextCategory("Mejor valorado")
+                //TextCategory(stringResource(Res.string.title_top_rated))
                 MoviesList(
                     movies = viewmodel.moviesTop,
                     action = action,
                 )
 
-                TextCategory(stringResource(Res.string.title_upcoming))
+                TextCategory("Próximamente")
+                //TextCategory(stringResource(Res.string.title_upcoming))
                 MoviesList(
                     movies = viewmodel.moviesUpComing,
                     action = action,
@@ -168,19 +166,22 @@ private fun TopBarMovie(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Movies") }, actions = {
-                IconButton(
-                    onClick = {
-                        movieAction(MovieAction.OnSearchView)
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = "Search",
-                        tint = Color.Gray,
-                    )
-                }
-            })
+            TopAppBar(
+                title = { Text("Movies") },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            movieAction(MovieAction.OnSearchView)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = "Search",
+                            tint = Color.Gray,
+                        )
+                    }
+                },
+            )
         },
         bottomBar = {
             BottomNavigationBar(
@@ -232,7 +233,7 @@ private fun MoviesList(
     LazyRow(
         modifier = Modifier.scrollable(
             state = rememberScrollState(),
-            orientation = Orientation.Horizontal
+            orientation = Orientation.Horizontal,
         ).height(250.dp),
     ) {
         items(movies) {

@@ -187,7 +187,7 @@ private fun ContentMovieDetail(
                             tint = Color(0xFFFEB800),
                         )
                         Text(
-                            text = movie?.voteAverage?.toVote() ?: "",
+                            text = movie.voteAverage.toVote(),
                             modifier = Modifier.align(Alignment.CenterVertically),
                             style = MaterialTheme.typography.labelSmall,
                         )
