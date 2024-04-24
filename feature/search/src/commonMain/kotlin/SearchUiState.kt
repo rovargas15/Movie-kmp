@@ -7,8 +7,6 @@ sealed interface SearchUiState {
 
     data object Loading : SearchUiState
 
-    data object Success : SearchUiState
-
     data object Error : SearchUiState
 
     data object OnBackPress : SearchUiState

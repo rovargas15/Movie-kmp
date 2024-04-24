@@ -30,8 +30,7 @@ class SearchViewmodel(
         viewModelScope.launch(coroutineDispatcher) {
             getSearchMovie.invoke(query).fold(
                 onSuccess = {
-                    movies = it.results
-                    searchUiState.value = SearchUiState.Success
+                    movies = it.results.distinctBy { it.movieId }
                 },
                 onFailure = {
                     searchUiState.value = SearchUiState.Error

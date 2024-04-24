@@ -59,7 +59,7 @@ class MovieEntity : RealmObject {
         originalTitle: String,
         overview: String,
         popularity: Double,
-        posterPath: String,
+        posterPath: String?,
         releaseDate: String,
         title: String,
         video: Boolean,
@@ -77,7 +77,7 @@ class MovieEntity : RealmObject {
         this.originalTitle = originalTitle
         this.overview = overview
         this.popularity = popularity
-        this.posterPath = posterPath
+        this.posterPath = posterPath ?: ""
         this.releaseDate = releaseDate
         this.title = title
         this.video = video

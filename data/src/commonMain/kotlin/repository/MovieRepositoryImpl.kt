@@ -45,9 +45,13 @@ class MovieRepositoryImpl(
 
     override suspend fun getSearchMovie(query: String): Result<MovieBase> = launchResultSafe {
         val response = dataSourceRemote.getMoviesByQuery(query)
-
         val moviesResponse = response.results.map { it.toEntity() }
-        val movies = datasourceLocal.insertAll(moviesResponse, "").map { it.toDomain() }
+        datasourceLocal.insertAll(moviesResponse, "")
+        val movies = datasourceLocal.findBySearch(
+            moviesResponse.map {
+                it.movieId
+            }.toString(),
+        ).map { it.toDomain() }
 
         MovieBase(
             page = response.page,

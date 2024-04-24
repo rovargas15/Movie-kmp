@@ -100,9 +100,6 @@ private fun HandleState(
                 onBackPress()
             }
         }
-
-        is DetailMovieUiState.Success -> {
-        }
     }
 }
 

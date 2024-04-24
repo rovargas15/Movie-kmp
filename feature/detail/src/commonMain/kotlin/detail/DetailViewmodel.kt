@@ -71,7 +71,6 @@ class DetailViewmodel(
                         getRemoteMovieById(movieId)
                         getImage(movieId)
                     }
-                    movieUiState.value = DetailMovieUiState.Success
                 }
             }
         }
@@ -82,7 +81,6 @@ class DetailViewmodel(
             getRemoteMovieById.invoke(id).fold(
                 onSuccess = {
                     movieDetail = it
-                    movieUiState.value = DetailMovieUiState.Success
                 },
                 onFailure = {
                     println(it.message)
@@ -96,7 +94,6 @@ class DetailViewmodel(
             getMovieImageById.invoke(id).fold(
                 onSuccess = {
                     movieImage = it
-                    movieUiState.value = DetailMovieUiState.Success
                 },
                 onFailure = {
                     println(it.message)

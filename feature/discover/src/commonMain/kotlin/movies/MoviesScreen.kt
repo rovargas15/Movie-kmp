@@ -42,9 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import model.Movie
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ScreenMovies(
     viewmodel: MoviesViewmodel,
@@ -236,8 +234,8 @@ private fun MoviesList(
             orientation = Orientation.Horizontal,
         ).height(250.dp),
     ) {
-        items(movies) {
-            MovieItem(it, action)
+        items(movies) {movie->
+            MovieItem(movie, action)
         }
     }
 }

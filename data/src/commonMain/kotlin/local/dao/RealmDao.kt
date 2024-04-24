@@ -47,6 +47,14 @@ interface RealmDao<T : RealmObject> {
         return realm.query(clazz, "id == $0", id.toInt()).asFlow()
     }
 
+    suspend fun findBySearch(ids: String): RealmResults<T> {
+        val query = ids.replace("[", "{").replace("]", "}")
+        return realm.query(
+            clazz, "movieId IN $query",
+        ).find()
+    }
+
+
     suspend fun delete(entity: T) {
         realm.write {
             delete(entity)

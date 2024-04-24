@@ -50,7 +50,7 @@ fun ScreenSearch(
     onViewDetail: (Movie) -> Unit,
 ) {
     HandleState(
-        viewmodel = viewmodel, onDetailMovie = onViewDetail, onBackPress = onBackPress
+        viewmodel = viewmodel, onDetailMovie = onViewDetail, onBackPress = onBackPress,
     )
 
     val action: (SearchAction) -> Unit = {
@@ -62,11 +62,11 @@ fun ScreenSearch(
     ) {
 
         SearchView(
-            query = viewmodel.query, action = action
+            query = viewmodel.query, action = action,
         )
 
         MoviesList(
-            movies = viewmodel.movies, action = action
+            movies = viewmodel.movies, action = action,
         )
     }
 }
@@ -97,9 +97,6 @@ private fun HandleState(
         is SearchUiState.Error -> {
         }
 
-        is SearchUiState.Success -> {
-        }
-
         is SearchUiState.OnDetailMovie -> {
             LaunchedEffect(Unit) {
                 onDetailMovie((state as SearchUiState.OnDetailMovie).movie)
@@ -124,18 +121,22 @@ private fun SearchView(
     Card(
         modifier = Modifier.padding(
             all = 12.dp,
-        ), elevation = CardDefaults.cardElevation(8.dp)
+        ),
+        elevation = CardDefaults.cardElevation(8.dp),
     ) {
-        OutlinedTextField(value = query,
+        OutlinedTextField(
+            value = query,
             onValueChange = {
                 action(SearchAction.QueryMovie(it))
             },
             modifier = Modifier.fillMaxWidth().padding(5.dp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {
-                localSoftwareKeyboardController?.hide()
-                action(SearchAction.Search)
-            }),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    localSoftwareKeyboardController?.hide()
+                    action(SearchAction.Search)
+                },
+            ),
             singleLine = true,
             trailingIcon = {
                 Icon(
@@ -154,7 +155,8 @@ private fun SearchView(
                         action(SearchAction.OnBackPress)
                     },
                 )
-            })
+            },
+        )
     }
 }
 
@@ -187,7 +189,7 @@ private fun MovieItem(
     ) {
         Row {
             LoaderImage(
-                url = movie.posterPath, modifier = Modifier.width(150.dp).height(220.dp)
+                url = movie.posterPath, modifier = Modifier.width(150.dp).height(220.dp),
             )
             Column(modifier = Modifier.fillMaxWidth().padding(start = 4.dp)) {
                 Text(
@@ -209,7 +211,7 @@ private fun MovieItem(
                     )
                 }
                 Text(
-                    text = movie.overview, style = MaterialTheme.typography.bodySmall, maxLines = 5
+                    text = movie.overview, style = MaterialTheme.typography.bodySmall, maxLines = 5,
                 )
             }
         }
