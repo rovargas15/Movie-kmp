@@ -1,11 +1,11 @@
-
-import di.getMovieDao
-import org.koin.android.ext.koin.androidContext
+import di.createDatabase
+import local.database.MovieDatabase
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val dataBase =
     module {
-        single {
-            getMovieDao(androidContext())
+        single<MovieDatabase> {
+            createDatabase(androidApplication())
         }
     }

@@ -40,17 +40,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import model.Movie
+import org.koin.compose.koinInject
 import toVote
-
 
 @Composable
 fun ScreenSearch(
-    viewmodel: SearchViewmodel,
+    viewmodel: SearchViewmodel = koinInject(),
     onBackPress: () -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
     HandleState(
-        viewmodel = viewmodel, onDetailMovie = onViewDetail, onBackPress = onBackPress,
+        viewmodel = viewmodel,
+        onDetailMovie = onViewDetail,
+        onBackPress = onBackPress,
     )
 
     val action: (SearchAction) -> Unit = {
@@ -60,13 +62,14 @@ fun ScreenSearch(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-
         SearchView(
-            query = viewmodel.query, action = action,
+            query = viewmodel.query,
+            action = action,
         )
 
         MoviesList(
-            movies = viewmodel.movies, action = action,
+            movies = viewmodel.movies,
+            action = action,
         )
     }
 }
@@ -119,9 +122,10 @@ private fun SearchView(
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
 
     Card(
-        modifier = Modifier.padding(
-            all = 12.dp,
-        ),
+        modifier =
+            Modifier.padding(
+                all = 12.dp,
+            ),
         elevation = CardDefaults.cardElevation(8.dp),
     ) {
         OutlinedTextField(
@@ -131,29 +135,32 @@ private fun SearchView(
             },
             modifier = Modifier.fillMaxWidth().padding(5.dp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    localSoftwareKeyboardController?.hide()
-                    action(SearchAction.Search)
-                },
-            ),
+            keyboardActions =
+                KeyboardActions(
+                    onSearch = {
+                        localSoftwareKeyboardController?.hide()
+                        action(SearchAction.Search)
+                    },
+                ),
             singleLine = true,
             trailingIcon = {
                 Icon(
                     Icons.Outlined.Clear,
                     "contentDescription",
-                    modifier = Modifier.padding(4.dp).clickable {
-                        action(SearchAction.QueryMovie(""))
-                    },
+                    modifier =
+                        Modifier.padding(4.dp).clickable {
+                            action(SearchAction.QueryMovie(""))
+                        },
                 )
             },
             leadingIcon = {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     "contentDescription",
-                    modifier = Modifier.clickable {
-                        action(SearchAction.OnBackPress)
-                    },
+                    modifier =
+                        Modifier.clickable {
+                            action(SearchAction.OnBackPress)
+                        },
                 )
             },
         )
@@ -183,13 +190,15 @@ private fun MovieItem(
     action: (SearchAction) -> Unit,
 ) {
     ElevatedCard(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp).clickable {
-            action(SearchAction.OnSelectMovie(movie))
-        },
+        modifier =
+            Modifier.padding(start = 8.dp, end = 8.dp).clickable {
+                action(SearchAction.OnSelectMovie(movie))
+            },
     ) {
         Row {
             LoaderImage(
-                url = movie.posterPath, modifier = Modifier.width(150.dp).height(220.dp),
+                url = movie.posterPath,
+                modifier = Modifier.width(150.dp).height(220.dp),
             )
             Column(modifier = Modifier.fillMaxWidth().padding(start = 4.dp)) {
                 Text(
@@ -211,7 +220,9 @@ private fun MovieItem(
                     )
                 }
                 Text(
-                    text = movie.overview, style = MaterialTheme.typography.bodySmall, maxLines = 5,
+                    text = movie.overview,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 5,
                 )
             }
         }

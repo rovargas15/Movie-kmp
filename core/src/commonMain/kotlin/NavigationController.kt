@@ -1,106 +1,83 @@
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.IntOffset
-import detail.DetailViewmodel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import detail.ScreenDetailMovie
-import favorite.FavoriteViewmodel
 import favorite.ScreenFavorite
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.RouteBuilder
-import moe.tlaster.precompose.navigation.transition.NavTransition
-import movies.MoviesViewmodel
 import movies.ScreenMovies
 import movies.ScreenSearch
-import movies.SearchViewmodel
-import movies.bottomNavItems
-import org.koin.core.parameter.parametersOf
 
 @Composable
-fun NavigatorApp(navigator: Navigator) {
+fun NavigatorApp(navController: NavHostController = rememberNavController()) {
     NavHost(
-        navigator = navigator,
-        initialRoute = Router.DISCOVER,
-        persistNavState = true,
+        navController = navController,
+        startDestination = Router.DISCOVER,
     ) {
-        home(navigator)
-        detail(navigator)
-        search(navigator)
+        home(navController)
+        detail(navController)
+        search(navController)
     }
 }
 
-fun RouteBuilder.home(navigator: Navigator) {
-    scene(
-        route = Router.DISCOVER,
-        navTransition = NavTransition(
-            createTransition = slideInHorizontally(),
-            destroyTransition = slideOutHorizontally(),
-        ),
-    ) {
-        val viewmodel = koinViewModel(MoviesViewmodel::class) {
-            parametersOf(bottomNavItems[0])
-        }
-
-        ScreenMovies(viewmodel = viewmodel, onSelectMenu = {
-            navigator.navigate(it.route)
-        }, onViewDetail = {
-            navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
-        }, onSearchScreen = {
-            navigator.navigate(Router.SEARCH)
-        })
-    }
-
-    scene(
-        route = Router.FAVORITE,
-        navTransition = NavTransition(
-            createTransition = slideIn(
-                initialOffset = { IntOffset(it.width, 0) },
-            ),
-            destroyTransition = slideOutHorizontally(),
-        ),
-    ) {
-        val viewmodel = koinViewModel(FavoriteViewmodel::class) {
-            parametersOf(bottomNavItems[1])
-        }
-        ScreenFavorite(
-            viewmodel = viewmodel,
+fun NavGraphBuilder.home(navController: NavHostController) {
+    composable(route = Router.DISCOVER) {
+        ScreenMovies(
             onSelectMenu = {
-                navigator.navigate(it.route)
+                navController.navigate(it.route)
             },
             onViewDetail = {
-                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
+                navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
+            },
+            onSearchScreen = {
+                navController.navigate(Router.SEARCH)
+            },
+        )
+    }
+
+    composable(route = Router.FAVORITE) {
+        ScreenFavorite(
+            onSelectMenu = {
+                navController.navigate(it.route)
+            },
+            onViewDetail = {
+                navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
         )
     }
 }
 
-fun RouteBuilder.detail(navigator: Navigator) {
-    scene(route = "${Router.DETAIL_MOVIE}{${Arg.ID}}") {
-        val detailViewmodel = koinViewModel(DetailViewmodel::class) {
-            parametersOf(it)
-        }
+fun NavGraphBuilder.detail(navController: NavHostController) {
+    composable(
+        route = "${Router.DETAIL_MOVIE}{${Arg.ID}}",
+        arguments =
+            listOf(
+                navArgument(Arg.ID) {
+                    type = NavType.IntType
+                    nullable = false
+                },
+            ),
+    ) {
         ScreenDetailMovie(
-            detailViewmodel = detailViewmodel,
+            movieId = it.arguments?.getInt(Arg.ID) ?: 0,
             onBackPress = {
-                navigator.goBack()
+                navController.popBackStack()
             },
         )
     }
 }
 
-fun RouteBuilder.search(navigator: Navigator) {
-    scene(route = Router.SEARCH) {
-        val viewmodel: SearchViewmodel = koinViewModel(SearchViewmodel::class)
+fun NavGraphBuilder.search(navController: NavHostController) {
+    composable(route = Router.SEARCH) {
         ScreenSearch(
-            viewmodel = viewmodel,
             onViewDetail = {
-                navigator.navigate("${Router.DETAIL_MOVIE}${it.id}")
+                navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
             onBackPress = {
-                navigator.goBack()
+                navController.popBackStack()
             },
         )
     }

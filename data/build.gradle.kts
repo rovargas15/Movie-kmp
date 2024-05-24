@@ -1,13 +1,14 @@
-import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.realm)
-    kotlin("plugin.serialization") version "1.9.22"
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.room)
     alias(libs.plugins.gradleBuildConfig)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -32,6 +33,9 @@ kotlin {
         }
     }
 
+    sourceSets.all {
+        languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+    }
     sourceSets {
         val desktopMain by getting
 
@@ -40,6 +44,7 @@ kotlin {
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.android)
+            implementation(libs.androidx.room.paging)
         }
 
         commonMain.dependencies {
@@ -56,12 +61,14 @@ kotlin {
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
-            // realm
-            implementation(libs.realm.base)
             // coroutines
             implementation(libs.kotlinx.coroutines.core)
             // Log
             implementation(libs.napier)
+            // room
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
 
         iosMain.dependencies {
@@ -106,4 +113,16 @@ buildConfig {
 
     buildConfigField("API_KEY", piKey)
     buildConfigField("URL_BASE", "https://api.themoviedb.org/3/")
+}
+
+dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    debugImplementation(libs.compose.ui.tooling)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

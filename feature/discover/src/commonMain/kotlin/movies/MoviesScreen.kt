@@ -42,10 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import model.Movie
+import org.koin.compose.koinInject
 
 @Composable
 fun ScreenMovies(
-    viewmodel: MoviesViewmodel,
+    viewmodel: MoviesViewmodel = koinInject(),
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
     onSearchScreen: () -> Unit,
@@ -65,25 +66,26 @@ fun ScreenMovies(
         bottomNavRoute = viewmodel.bottomNavRoute,
         content = { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier.padding(paddingValues).fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 TextCategory("Popular")
-                //TextCategory(stringResource(Res.string.title_popular))
+                // TextCategory(stringResource(Res.string.title_popular))
                 MoviesList(
                     movies = viewmodel.moviesPopular,
                     action = action,
                 )
                 TextCategory("Mejor valorado")
-                //TextCategory(stringResource(Res.string.title_top_rated))
+                // TextCategory(stringResource(Res.string.title_top_rated))
                 MoviesList(
                     movies = viewmodel.moviesTop,
                     action = action,
                 )
 
                 TextCategory("Próximamente")
-                //TextCategory(stringResource(Res.string.title_upcoming))
+                // TextCategory(stringResource(Res.string.title_upcoming))
                 MoviesList(
                     movies = viewmodel.moviesUpComing,
                     action = action,
@@ -229,12 +231,13 @@ private fun MoviesList(
     action: (MovieAction) -> Unit,
 ) {
     LazyRow(
-        modifier = Modifier.scrollable(
-            state = rememberScrollState(),
-            orientation = Orientation.Horizontal,
-        ).height(250.dp),
+        modifier =
+            Modifier.scrollable(
+                state = rememberScrollState(),
+                orientation = Orientation.Horizontal,
+            ).height(250.dp),
     ) {
-        items(movies) {movie->
+        items(movies) { movie ->
             MovieItem(movie, action)
         }
     }
@@ -246,9 +249,10 @@ private fun MovieItem(
     action: (MovieAction) -> Unit,
 ) {
     Card(
-        modifier = Modifier.padding(start = 10.dp).clickable {
-            action(MovieAction.OnSelectMovie(movie))
-        },
+        modifier =
+            Modifier.padding(start = 10.dp).clickable {
+                action(MovieAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())

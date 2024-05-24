@@ -1,6 +1,7 @@
 package com.movie.kmp
 
 import android.app.Application
+import dataBase
 import di.koinModules
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -15,7 +16,7 @@ class MovieApp : Application() {
         startKoin {
             androidContext(this@MovieApp)
             androidLogger()
-            modules(koinModules)
+            modules(dataBase + koinModules)
         }
     }
 }

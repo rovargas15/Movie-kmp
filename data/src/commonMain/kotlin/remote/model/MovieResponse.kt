@@ -1,6 +1,5 @@
 package remote.model
 
-import io.realm.kotlin.ext.toRealmList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import local.entity.MovieEntity
@@ -36,19 +35,19 @@ data class MovieResponse(
     @SerialName("vote_count")
     val voteCount: Int,
 ) {
-    fun toEntity() =
+    fun toEntity(category: String) =
         MovieEntity(
             id = 0,
             movieId = id,
-            category = "",
+            category = category,
             adult = adult,
-            backdropPath = backdropPath,
-            genreIds = genreIds.toRealmList(),
+            backdropPath = backdropPath ?: "",
+            genreIds = genreIds,
             originalLanguage = originalLanguage,
             originalTitle = originalTitle,
             overview = overview,
             popularity = popularity,
-            posterPath = posterPath,
+            posterPath = posterPath ?: "",
             releaseDate = releaseDate,
             title = title,
             video = video,

@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.realm)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -46,8 +46,13 @@ kotlin {
             implementation(projects.feature.detail)
             implementation(projects.feature.search)
             implementation(compose.runtime)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
+            // android jetpack
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.androidx.navigation.compose)
             // ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.content.negotiation)
@@ -57,8 +62,7 @@ kotlin {
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
-            // realm
-            implementation(libs.realm.base)
+            implementation(libs.koin.compose)
         }
 
         iosMain.dependencies {

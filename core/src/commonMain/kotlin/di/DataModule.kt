@@ -1,12 +1,7 @@
 package di
 
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import local.dao.MovieDao
-import local.datasource.MovieDatasource
-import local.entity.MovieEntity
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -23,40 +18,30 @@ import usecase.GetRemoteMovieById
 import usecase.GetSearchMovie
 import usecase.UpdateMovie
 
-val dataModule = module {
-    singleOf(::coroutineDispatcherProvider)
+val dataModule =
+    module {
 
-    singleOf(::client)
+        singleOf(::coroutineDispatcherProvider)
 
-    singleOf(::MovieDatasource) { bind<MovieDao>() }
+        singleOf(::client)
 
-    singleOf(::MovieDataSource) { bind<MovieApi>() }
+        singleOf(::MovieDataSource) { bind<MovieApi>() }
 
-    singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
+        singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
 
-    factoryOf(::GetMovieByCategory)
+        factoryOf(::GetMovieByCategory)
 
-    factoryOf(::GetLocalMovieById)
+        factoryOf(::GetLocalMovieById)
 
-    factoryOf(::GetRemoteMovieById)
+        factoryOf(::GetRemoteMovieById)
 
-    factoryOf(::GetMovieImageById)
+        factoryOf(::GetMovieImageById)
 
-    factoryOf(::GetSearchMovie)
+        factoryOf(::GetSearchMovie)
 
-    factoryOf(::GetFavoriteMovie)
+        factoryOf(::GetFavoriteMovie)
 
-    factoryOf(::UpdateMovie)
-
-    single {
-        Realm.open(realmConfig)
+        factoryOf(::UpdateMovie)
     }
-}
 
-fun coroutineDispatcherProvider() = Dispatchers.IO
-
-private val realmConfig = RealmConfiguration.create(
-    schema = setOf(
-        MovieEntity::class,
-    ),
-)
+fun coroutineDispatcherProvider(): CoroutineDispatcher = Dispatchers.Default

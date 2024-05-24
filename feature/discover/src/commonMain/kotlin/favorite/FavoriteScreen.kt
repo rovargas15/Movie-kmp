@@ -43,11 +43,12 @@ import androidx.compose.ui.unit.dp
 import model.Movie
 import movies.BottomNavRoute
 import movies.bottomNavItems
+import org.koin.compose.koinInject
 import toVote
 
 @Composable
 fun ScreenFavorite(
-    viewmodel: FavoriteViewmodel,
+    viewmodel: FavoriteViewmodel = koinInject(),
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
@@ -199,13 +200,15 @@ private fun MovieItem(
     action: (FavoriteAction) -> Unit,
 ) {
     ElevatedCard(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp).clickable {
-            action(FavoriteAction.OnSelectMovie(movie))
-        }
+        modifier =
+            Modifier.padding(start = 8.dp, end = 8.dp).clickable {
+                action(FavoriteAction.OnSelectMovie(movie))
+            },
     ) {
         Row {
             LoaderImage(
-                url = movie.posterPath, modifier = Modifier.width(150.dp).height(220.dp),
+                url = movie.posterPath,
+                modifier = Modifier.width(150.dp).height(220.dp),
             )
             Column(modifier = Modifier.fillMaxWidth().padding(start = 4.dp)) {
                 Row {
@@ -237,7 +240,7 @@ private fun MovieItem(
                     ) {
                         Icon(
                             modifier =
-                            Modifier.size(35.dp),
+                                Modifier.size(35.dp),
                             imageVector = Icons.Filled.Favorite,
                             tint = Color.Red,
                             contentDescription = "favorite",

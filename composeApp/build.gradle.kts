@@ -40,22 +40,23 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.core)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
             implementation(compose.runtime)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            // android jetpack
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
             // Log
             implementation(libs.napier)
-            // Navigation
-            api(libs.precompose)
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            api(libs.precompose.koin)
         }
 
         iosMain.dependencies {

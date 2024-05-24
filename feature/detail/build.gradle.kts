@@ -46,20 +46,20 @@ kotlin {
             implementation(projects.common)
             implementation(projects.feature.share)
             implementation(compose.runtime)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            // Viewmodel
-            api(libs.precompose.viewmodel)
-            api(libs.precompose)
+            // android jetpack
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            api(libs.precompose.koin)
         }
 
         iosMain.dependencies {

@@ -9,7 +9,7 @@ import model.MovieImage
 interface MovieRepository {
     suspend fun getMovies(category: String): Result<MovieBase>
 
-    suspend fun getMovieById(id: String): Flow<List<Movie>>
+    suspend fun getMovieById(id: Int): Flow<Movie>
 
     suspend fun getMovieByIdRemote(id: Int): Result<MovieDetail>
 

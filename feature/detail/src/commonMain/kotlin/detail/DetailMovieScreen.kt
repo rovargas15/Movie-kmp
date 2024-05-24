@@ -42,9 +42,7 @@ import androidx.compose.ui.unit.dp
 import model.Movie
 import model.MovieDetail
 import model.MovieImage
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleObserver
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import org.koin.compose.koinInject
 import toDateFormat
 import toHour
 import toVote
@@ -52,10 +50,11 @@ import kotlin.math.min
 
 @Composable
 fun ScreenDetailMovie(
-    detailViewmodel: DetailViewmodel,
+    detailViewmodel: DetailViewmodel = koinInject(),
+    movieId: Int,
     onBackPress: () -> Unit,
 ) {
-    HandleState(detailViewmodel, onBackPress)
+    HandleState(detailViewmodel, movieId, onBackPress)
 
     detailViewmodel.movie?.let { movie ->
         ContentMovieDetail(
@@ -72,17 +71,12 @@ fun ScreenDetailMovie(
 @Composable
 private fun HandleState(
     viewmodel: DetailViewmodel,
+    movieId: Int,
     onBackPress: () -> Unit,
 ) {
-    LifecycleRegistry().addObserver(
-        observer = object : LifecycleObserver {
-            override fun onStateChanged(state: Lifecycle.State) {
-                if (state == Lifecycle.State.Initialized) {
-                    viewmodel.getData()
-                }
-            }
-        },
-    )
+    LaunchedEffect(null) {
+        viewmodel.onLoad(movieId)
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -118,24 +112,27 @@ private fun ContentMovieDetail(
         Box {
             LoaderImage(
                 url = movie.backdropPath,
-                modifier = Modifier.fillMaxWidth().height(250.dp).graphicsLayer {
-                    alpha = min(1f, 1 - (scrollState.value / 600f))
-                    translationY = -scrollState.value * 0.1f
-                },
+                modifier =
+                    Modifier.fillMaxWidth().height(250.dp).graphicsLayer {
+                        alpha = min(1f, 1 - (scrollState.value / 600f))
+                        translationY = -scrollState.value * 0.1f
+                    },
             )
 
             IconButton(
-                modifier = Modifier.padding(10.dp).align(Alignment.TopStart).graphicsLayer {
-                    alpha = min(1f, 1 - (scrollState.value / 600f))
-                    translationY = -scrollState.value * 0.1f
-                },
+                modifier =
+                    Modifier.padding(10.dp).align(Alignment.TopStart).graphicsLayer {
+                        alpha = min(1f, 1 - (scrollState.value / 600f))
+                        translationY = -scrollState.value * 0.1f
+                    },
                 onClick = {
                     action(DetailMovieAction.OnBackPress)
                 },
             ) {
                 Icon(
-                    modifier = Modifier.size(35.dp)
-                        .background(Color.LightGray.copy(0.2f), shape = CircleShape),
+                    modifier =
+                        Modifier.size(35.dp)
+                            .background(Color.LightGray.copy(0.2f), shape = CircleShape),
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Volver",
                 )
@@ -149,15 +146,21 @@ private fun ContentMovieDetail(
             ) {
                 Icon(
                     modifier = Modifier.size(35.dp),
-                    imageVector = if (movie.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    imageVector =
+                        if (movie.isFavorite) {
+                            Icons.Filled.Favorite
+                        } else {
+                            Icons.Filled.FavoriteBorder
+                        },
                     tint = if (movie.isFavorite) Color.Red else Color.Black,
                     contentDescription = "favorite",
                 )
             }
 
             Row(
-                modifier = Modifier.align(Alignment.CenterStart)
-                    .padding(top = 140.dp, start = 12.dp),
+                modifier =
+                    Modifier.align(Alignment.CenterStart)
+                        .padding(top = 140.dp, start = 12.dp),
             ) {
                 Box {
                     ElevatedCard(modifier = Modifier.width(150.dp).height(220.dp)) {
@@ -165,11 +168,12 @@ private fun ContentMovieDetail(
                     }
                 }
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        top = 120.dp,
-                        start = 8.dp,
-                        end = 12.dp,
-                    ),
+                    modifier =
+                        Modifier.fillMaxWidth().padding(
+                            top = 120.dp,
+                            start = 8.dp,
+                            end = 12.dp,
+                        ),
                 ) {
                     Text(
                         text = movie.title,

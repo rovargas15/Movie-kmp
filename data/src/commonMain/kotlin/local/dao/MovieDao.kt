@@ -1,35 +1,36 @@
 package local.dao
 
-import io.realm.kotlin.ext.query
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import local.entity.MovieEntity
-import model.Movie
 
-interface MovieDao : RealmDao<MovieEntity> {
-    override suspend fun insertAll(
-        entities: List<MovieEntity>,
-        category: String,
-    ): List<MovieEntity> {
-        var count = realm.query<MovieEntity>().find().size + 1
-        realm.write {
-            for (entity in entities) {
-                entity.category = category
-                entity.id = count
-                copyToRealm(entity)
-                count++
-            }
-        }
-        return findAllByCategory(category)
-    }
+@Dao
+interface MovieDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(item: MovieEntity)
 
-    suspend fun updateMovie(movie: Movie) {
-        realm.query<MovieEntity>("id == $0", movie.id)
-            .first()
-            .find()
-            ?.also { result ->
-                // Add a dog in a transaction
-                realm.writeBlocking {
-                    findLatest(result)?.isFavorite = movie.isFavorite
-                }
-            }
-    }
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(items: List<MovieEntity>)
+
+    @Query("SELECT count(*) FROM MovieEntity WHERE category = :category")
+    suspend fun countByCategory(category: String): Int
+
+    @Query("SELECT * FROM MovieEntity WHERE category = :category")
+    fun getMovieByCategory(category: String): Flow<List<MovieEntity>>
+
+    @Query("SELECT * FROM MovieEntity WHERE id = :id")
+    fun getMovieById(id: Int): Flow<MovieEntity>
+
+    @Query("SELECT * FROM MovieEntity WHERE isFavorite = true")
+    fun getAllAsFlow(): Flow<List<MovieEntity>>
+
+    @Query("SELECT * FROM MovieEntity")
+    fun findBySearch(): Flow<List<MovieEntity>>
+
+    @Update
+    suspend fun updateMovie(movieEntity: MovieEntity): Int
 }

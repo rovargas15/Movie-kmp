@@ -6,18 +6,18 @@ import Category.UPCOMING
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import model.Movie
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
 import usecase.GetMovieByCategory
 
 class MoviesViewmodel(
-    private val coroutineDispatcher: CoroutineDispatcher,
     private val getMovieByCategory: GetMovieByCategory,
+    private val coroutineDispatcher: CoroutineDispatcher,
     val bottomNavRoute: BottomNavRoute,
 ) : ViewModel() {
     private val movieUiState = MutableStateFlow<MovieUiState>(MovieUiState.Init)
@@ -33,31 +33,28 @@ class MoviesViewmodel(
     var moviesUpComing by mutableStateOf(listOf<Movie>())
         private set
 
-    private fun getMovies(category: String) {
-        viewModelScope.launch {
-            getMovieByCategory.invoke(category).fold(
-                onSuccess = {
-                    when (category) {
-                        POPULAR -> {
-                            moviesPopular = it.results
-                        }
-
-                        TOP_RATED -> {
-                            moviesTop = it.results
-                        }
-
-                        UPCOMING -> {
-                            moviesUpComing = it.results
-                        }
+    private suspend fun getMovies(category: String) =
+        getMovieByCategory.invoke(category).fold(
+            onSuccess = {
+                when (category) {
+                    POPULAR -> {
+                        moviesPopular = it.results
                     }
-                    movieUiState.value = MovieUiState.Success
-                },
-                onFailure = {
-                    movieUiState.value = MovieUiState.Error
-                },
-            )
-        }
-    }
+
+                    TOP_RATED -> {
+                        moviesTop = it.results
+                    }
+
+                    UPCOMING -> {
+                        moviesUpComing = it.results
+                    }
+                }
+                movieUiState.value = MovieUiState.Success
+            },
+            onFailure = {
+                movieUiState.value = MovieUiState.Error
+            },
+        )
 
     fun managerAction(action: MovieAction) {
         when (action) {
@@ -76,9 +73,11 @@ class MoviesViewmodel(
             }
 
             MovieAction.Init -> {
-                getMovies(POPULAR)
-                getMovies(TOP_RATED)
-                getMovies(UPCOMING)
+                viewModelScope.launch(coroutineDispatcher) {
+                    getMovies(POPULAR)
+                    getMovies(TOP_RATED)
+                    getMovies(UPCOMING)
+                }
             }
 
             MovieAction.OnSearchView -> {

@@ -7,7 +7,7 @@ fun main() =
     application {
         Window(onCloseRequest = ::exitApplication, title = "Movie") {
             startKoin {
-                modules(koinModules)
+                modules(dataBase + koinModules)
             }
             App()
         }

@@ -5,7 +5,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import local.MovieDatabase
+import local.database.MovieDatabase
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -16,7 +16,9 @@ fun createDatabase(): MovieDatabase {
     return Room.databaseBuilder<MovieDatabase>(
         name = dbFile,
         factory = { MovieDatabase::class.instantiateImpl() },
-    ).setDriver(BundledSQLiteDriver()).setQueryCoroutineContext(Dispatchers.IO).build()
+    ).setDriver(BundledSQLiteDriver())
+        .setQueryCoroutineContext(Dispatchers.IO)
+        .build()
 }
 
 @OptIn(ExperimentalForeignApi::class)
