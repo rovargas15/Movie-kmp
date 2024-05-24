@@ -12,17 +12,20 @@ pagingComposeAndroid = "3.3.0"
 androidx-espresso-core = "3.5.1"
 androidx-test-junit = "1.1.5"
 compose = "1.6.7"
-compose-plugin = "1.6.0"
+compose-plugin = "1.6.1"
+compose-compiler = "1.5.11"
 junit = "4.13.2"
 koin = "3.5.1"
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 coroutines = "1.8.0"
 ktor = "2.3.8"
 napier = "2.7.1"
+kotlinxDatetime = "0.6.0-RC.2"
 buildconfig = "5.3.5"
 statelyCommon = "2.0.5"
 ksp = "1.9.23-1.0.19"
 sqlite = "2.5.0-SNAPSHOT"
+skie = "0.6.2"
 
 [libraries]
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
@@ -62,6 +65,9 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 stately-common = { module = "co.touchlab:stately-common", version.ref = "statelyCommon" }
 
+skie-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -73,3 +79,4 @@ kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = 
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "androidx-room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }

@@ -9,13 +9,14 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.gradleBuildConfig)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.skie)
 }
 
 kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "11"
             }
         }
     }
@@ -58,6 +59,7 @@ kotlin {
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.logger)
             implementation(libs.ktor.client.auth)
+            implementation(libs.skie.annotations)
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
@@ -87,8 +89,8 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

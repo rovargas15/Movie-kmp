@@ -20,7 +20,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "common"
@@ -36,10 +36,9 @@ kotlin {
         }
 
         commonMain.dependencies {
-            implementation(libs.kotlinx.coroutines.core)
             implementation(compose.runtime)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -74,5 +73,3 @@ compose.desktop {
         }
     }
 }
-
-
