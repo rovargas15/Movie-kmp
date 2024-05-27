@@ -52,8 +52,16 @@ class DetailViewmodel(
                 movieUiState.value = DetailMovieUiState.OnBack
             }
 
-            is DetailMovieAction.AddFavorite -> {
+            is DetailMovieAction.SetMovieFavorite -> {
                 updateMovie(action.movie)
+            }
+
+            is DetailMovieAction.RemoveMovieFavorite -> {
+                updateMovie(action.movie)
+            }
+
+            is DetailMovieAction.ConfirmRemoveMovieFavorite -> {
+                movieUiState.value = DetailMovieUiState.OnConfirmRemoveFavorite(action.movie)
             }
         }
     }

@@ -1,23 +1,26 @@
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinxSerialization)
-    alias(libs.plugins.room)
     alias(libs.plugins.gradleBuildConfig)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.skie)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -43,7 +46,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             // Koin
-            implementation(libs.koin.core)
             implementation(libs.koin.android)
             implementation(libs.androidx.room.paging)
         }
@@ -51,8 +53,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.domain)
             implementation(compose.runtime)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
             // ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.content.negotiation)
@@ -88,9 +90,25 @@ android {
     namespace = "com.movie.kmp.data"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        compose = true
+    }
+    dependencies {
+        debugImplementation(compose.uiTooling)
     }
 }
 
@@ -122,7 +140,6 @@ dependencies {
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
-    debugImplementation(libs.compose.ui.tooling)
 }
 
 room {

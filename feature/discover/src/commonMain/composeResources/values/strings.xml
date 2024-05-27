@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">Movie</string>
-    <string name="title_popular">Popular</string>
-    <string name="title_top_rated">Mejor valorado</string>
-    <string name="title_upcoming">Próximamente</string>
-</resources>

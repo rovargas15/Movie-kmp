@@ -7,5 +7,9 @@ sealed interface DetailMovieAction {
 
     data object CleanStatus : DetailMovieAction
 
-    data class AddFavorite(val movie: Movie) : DetailMovieAction
+    data class SetMovieFavorite(val movie: Movie) : DetailMovieAction
+
+    data class RemoveMovieFavorite(val movie: Movie) : DetailMovieAction
+
+    data class ConfirmRemoveMovieFavorite(val movie: Movie) : DetailMovieAction
 }

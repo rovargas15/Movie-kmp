@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Movie</string>
+    <string name="title_popular">Popular</string>
+    <string name="title_top_rated">Mejor valorado</string>
+    <string name="title_upcoming">Próximamente</string>
+
+    <string name="remove_movie_from_favorites">Remove Movie from Favorites</string>
+    <string name="remove_movie_from_favorites_confirmation">Are you sure you want to remove this movie from your favorites?</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+</resources>

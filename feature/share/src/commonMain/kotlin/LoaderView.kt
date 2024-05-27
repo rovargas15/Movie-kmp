@@ -16,9 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import movie.feature.share.generated.resources.Res
-import movie.feature.share.generated.resources.ic_movie
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import com.movie.kmp.Res
+import com.movie.kmp.ic_movie
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -33,16 +32,15 @@ fun Loading(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun iconLogo(modifier: Modifier) {
     Icon(
         modifier = modifier,
         tint = Color.Red,
         painter =
-        painterResource(
-            resource = Res.drawable.ic_movie,
-        ),
+            painterResource(
+                resource = Res.drawable.ic_movie,
+            ),
         contentDescription = "Logo",
     )
 }
