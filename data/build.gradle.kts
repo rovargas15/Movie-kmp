@@ -1,4 +1,3 @@
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -135,13 +134,10 @@ buildConfig {
     buildConfigField("URL_BASE", "https://api.themoviedb.org/3/")
 }
 
-dependencies {
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
-}
-
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    ksp(libs.androidx.room.compiler)
 }
