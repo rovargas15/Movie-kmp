@@ -1,5 +1,6 @@
 package repository
 
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -72,6 +73,7 @@ class MovieRepositoryImpl(
         }
 
     override suspend fun updateMovie(movie: Movie) {
-        //      movieDao.updateMovie(movie.)
+        val id = movieDatabase.movieDao().updateMovie(movie.isFavorite, movie.id)
+        Napier.i("Repository id = $id")
     }
 }

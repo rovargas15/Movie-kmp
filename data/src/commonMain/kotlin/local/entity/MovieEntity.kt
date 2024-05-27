@@ -12,8 +12,7 @@ data class MovieEntity(
     val category: String,
     val adult: Boolean,
     val backdropPath: String,
-    @field:TypeConverters(GenreConvert::class)
-    val genreIds: List<Int>,
+    @field:TypeConverters(GenreConvert::class) val genreIds: List<Int>,
     val originalLanguage: String,
     val originalTitle: String,
     val overview: String,
@@ -46,3 +45,27 @@ data class MovieEntity(
             isFavorite = isFavorite,
         )
 }
+
+fun Movie.toEntity() =
+    MovieEntity(
+        movieId = movieId,
+        category = "",
+        adult = adult,
+        backdropPath = backdropPath,
+        genreIds = genreIds,
+        originalLanguage = originalLanguage,
+        originalTitle = originalTitle,
+        overview = overview,
+        popularity = popularity,
+        posterPath = posterPath,
+        releaseDate = releaseDate,
+        title = title,
+        video = video,
+        voteAverage = voteAverage,
+        voteCount = voteCount,
+        isFavorite = isFavorite,
+    )
+
+data class FavoriteMovie(
+    val isFavorite: Boolean,
+)
