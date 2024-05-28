@@ -36,7 +36,7 @@ class FavoriteViewmodel(
         }
     }
 
-    fun managerAction(action: FavoriteAction) {
+    fun handleAction(action: FavoriteAction) {
         when (action) {
             is FavoriteAction.CleanStatus -> {
                 movieUiState.value = FavoriteUiState.Init
@@ -56,8 +56,13 @@ class FavoriteViewmodel(
                 }
             }
 
-            is FavoriteAction.OnRemoveFavorite -> {
+            is FavoriteAction.RemoveMovieFavorite -> {
                 updateMovie(action.movie)
+                movieUiState.value = FavoriteUiState.Init
+            }
+
+            is FavoriteAction.ConfirmRemoveMovieFavorite -> {
+                movieUiState.value = FavoriteUiState.OnConfirmRemoveFavorite(action.movie)
             }
         }
     }

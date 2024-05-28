@@ -1,5 +1,6 @@
 package detail
 
+import ConfirmRemoveFavoriteDialog
 import LoaderImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,13 +23,11 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -41,15 +40,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.movie.kmp.Res
-import com.movie.kmp.cancel
-import com.movie.kmp.remove
-import com.movie.kmp.remove_movie_from_favorites
-import com.movie.kmp.remove_movie_from_favorites_confirmation
 import model.Movie
 import model.MovieDetail
 import model.MovieImage
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import toDateFormat
 import toHour
@@ -169,7 +162,7 @@ private fun ContentMovieDetail(
                 onClick = {
                     action(
                         if (movie.isFavorite) {
-                            DetailMovieAction.RemoveMovieFavorite(movie)
+                            DetailMovieAction.ConfirmRemoveMovieFavorite(movie)
                         } else {
                             DetailMovieAction.SetMovieFavorite(
                                 movie,
@@ -323,31 +316,4 @@ private fun itemGenre(genre: MovieDetail.Genre) {
             modifier = Modifier.padding(8.dp),
         )
     }
-}
-
-@Composable
-fun ConfirmRemoveFavoriteDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(text = stringResource(Res.string.remove))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(Res.string.cancel))
-            }
-        },
-        title = {
-            Text(text = stringResource(Res.string.remove_movie_from_favorites))
-        },
-        text = {
-            Text(text = stringResource(Res.string.remove_movie_from_favorites_confirmation))
-        },
-    )
 }

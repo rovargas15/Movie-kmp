@@ -1,13 +1,16 @@
 package favorite
 
+import ConfirmRemoveFavoriteDialog
 import LoaderImage
 import Loading
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,7 +62,7 @@ fun ScreenFavorite(
     )
 
     val action: (FavoriteAction) -> Unit = {
-        viewmodel.managerAction(it)
+        viewmodel.handleAction(it)
     }
 
     TopBarMovie(
@@ -83,7 +86,7 @@ private fun HandleState(
 ) {
     DisposableEffect(Unit) {
         onDispose {
-            viewmodel.managerAction(FavoriteAction.CleanStatus)
+            viewmodel.handleAction(FavoriteAction.CleanStatus)
         }
     }
 
@@ -91,7 +94,7 @@ private fun HandleState(
 
     when (state) {
         is FavoriteUiState.Init -> {
-            viewmodel.managerAction(FavoriteAction.Init)
+            viewmodel.handleAction(FavoriteAction.Init)
         }
 
         is FavoriteUiState.Loading -> {
@@ -116,6 +119,24 @@ private fun HandleState(
             LaunchedEffect(Unit) {
                 onSelectMenu(menu.bottomNavRoute)
             }
+        }
+
+        is FavoriteUiState.OnConfirmRemoveFavorite -> {
+            ConfirmRemoveFavoriteDialog(
+                onDismissRequest = {
+                    viewmodel.handleAction(FavoriteAction.CleanStatus)
+                },
+                onConfirm = {
+                    viewmodel.handleAction(
+                        FavoriteAction.RemoveMovieFavorite(
+                            (state as FavoriteUiState.OnConfirmRemoveFavorite).movie,
+                        ),
+                    )
+                },
+                onDismiss = {
+                    viewmodel.handleAction(FavoriteAction.CleanStatus)
+                },
+            )
         }
     }
 }
@@ -181,17 +202,26 @@ private fun MoviesList(
     action: (FavoriteAction) -> Unit,
     modifier: Modifier,
 ) {
-    LazyVerticalStaggeredGrid(
-        modifier = modifier,
-        columns = StaggeredGridCells.Adaptive(200.dp),
-        verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            items(movies) {
-                MovieItem(it, action)
-            }
-        },
-    )
+    if (movies.isEmpty()) {
+        Box(
+            modifier = modifier.fillMaxWidth().fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "No Movies")
+        }
+    } else {
+        LazyVerticalStaggeredGrid(
+            modifier = modifier,
+            columns = StaggeredGridCells.Adaptive(200.dp),
+            verticalItemSpacing = 4.dp,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(movies) {
+                    MovieItem(it, action)
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -235,7 +265,7 @@ private fun MovieItem(
                     IconButton(
                         modifier = Modifier.padding(3.dp),
                         onClick = {
-                            action(FavoriteAction.OnRemoveFavorite(movie = movie))
+                            action(FavoriteAction.ConfirmRemoveMovieFavorite(movie))
                         },
                     ) {
                         Icon(

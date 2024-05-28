@@ -58,6 +58,7 @@ class DetailViewmodel(
 
             is DetailMovieAction.RemoveMovieFavorite -> {
                 updateMovie(action.movie)
+                movieUiState.value = DetailMovieUiState.Init
             }
 
             is DetailMovieAction.ConfirmRemoveMovieFavorite -> {

@@ -41,7 +41,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.movie.kmp.Res
+import com.movie.kmp.title_popular
+import com.movie.kmp.title_top_rated
+import com.movie.kmp.title_upcoming
 import model.Movie
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -71,21 +76,18 @@ fun ScreenMovies(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory("Popular")
-                // TextCategory(stringResource(Res.string.title_popular))
+                TextCategory(stringResource(Res.string.title_popular))
                 MoviesList(
                     movies = viewmodel.moviesPopular,
                     action = action,
                 )
-                TextCategory("Mejor valorado")
-                // TextCategory(stringResource(Res.string.title_top_rated))
+                TextCategory(stringResource(Res.string.title_top_rated))
                 MoviesList(
                     movies = viewmodel.moviesTop,
                     action = action,
                 )
 
-                TextCategory("Próximamente")
-                // TextCategory(stringResource(Res.string.title_upcoming))
+                TextCategory(stringResource(Res.string.title_upcoming))
                 MoviesList(
                     movies = viewmodel.moviesUpComing,
                     action = action,

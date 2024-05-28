@@ -12,6 +12,8 @@ sealed interface FavoriteUiState {
 
     data class OnShowDetail(val movie: Movie) : FavoriteUiState
 
+    data class OnConfirmRemoveFavorite(val movie: Movie) : FavoriteUiState
+
     data class OnShowOptionMenu(val bottomNavRoute: BottomNavRoute) : FavoriteUiState
 
     data object Error : FavoriteUiState
