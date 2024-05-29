@@ -20,6 +20,7 @@ fun NavigatorApp(navController: NavHostController = rememberNavController()) {
         home(navController)
         detail(navController)
         search(navController)
+        paging(navController)
     }
 }
 
@@ -34,6 +35,9 @@ fun NavGraphBuilder.home(navController: NavHostController) {
             },
             onSearchScreen = {
                 navController.navigate(Router.SEARCH)
+            },
+            onPagingShow = {
+                navController.navigate("${Router.MOVIE_ALL}$it")
             },
         )
     }
@@ -79,6 +83,29 @@ fun NavGraphBuilder.search(navController: NavHostController) {
             onBackPress = {
                 navController.popBackStack()
             },
+        )
+    }
+}
+
+fun NavGraphBuilder.paging(navController: NavHostController) {
+    composable(
+        route = "${Router.MOVIE_ALL}{${Arg.CATEGORY}}",
+        arguments =
+            listOf(
+                navArgument(Arg.CATEGORY) {
+                    type = NavType.StringType
+                    nullable = false
+                },
+            ),
+    ) {
+        ScreenPaging(
+            onViewDetail = {
+                navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
+            },
+            onBackPress = {
+                navController.popBackStack()
+            },
+            category = it.arguments?.getString(Arg.CATEGORY) ?: "",
         )
     }
 }

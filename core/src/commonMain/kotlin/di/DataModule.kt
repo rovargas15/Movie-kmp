@@ -14,6 +14,7 @@ import usecase.GetFavoriteMovie
 import usecase.GetLocalMovieById
 import usecase.GetMovieByCategory
 import usecase.GetMovieImageById
+import usecase.GetPagingMovieByCategory
 import usecase.GetRemoteMovieById
 import usecase.GetSearchMovie
 import usecase.UpdateMovie
@@ -42,6 +43,8 @@ val dataModule =
         factoryOf(::GetFavoriteMovie)
 
         factoryOf(::UpdateMovie)
+
+        factoryOf(::GetPagingMovieByCategory)
     }
 
 fun coroutineDispatcherProvider(): CoroutineDispatcher = Dispatchers.Default

@@ -3,6 +3,8 @@ package favorite
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,13 +21,18 @@ class FavoriteViewmodel(
     private val getFavoriteMovie: GetFavoriteMovie,
     val bottomNavRoute: BottomNavRoute,
     private val updateMovie: UpdateMovie,
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
     private val movieUiState = MutableStateFlow<FavoriteUiState>(FavoriteUiState.Init)
     val uiState: StateFlow<FavoriteUiState>
         get() = movieUiState
 
     var moviesFavorite by mutableStateOf(listOf<Movie>())
         private set
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        getMovies()
+    }
 
     private fun getMovies() {
         viewModelScope.launch(coroutineDispatcher) {
@@ -47,7 +54,6 @@ class FavoriteViewmodel(
             }
 
             is FavoriteAction.Init -> {
-                getMovies()
             }
 
             is FavoriteAction.OnSelectMenu -> {

@@ -15,5 +15,7 @@ sealed interface MovieUiState {
 
     data object OnSearchView : MovieUiState
 
+    data class OnPagingView(val category: String) : MovieUiState
+
     data object Error : MovieUiState
 }

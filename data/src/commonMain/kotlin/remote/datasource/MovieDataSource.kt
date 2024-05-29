@@ -11,8 +11,11 @@ import remote.model.MovieImageResponse
 import remote.model.MovieResponseBase
 
 class MovieDataSource(private val client: HttpClient) : MovieApi {
-    override suspend fun getMovies(category: String): MovieResponseBase {
-        val response = client.get("${BuildConfig.URL_BASE}movie/$category?language=es")
+    override suspend fun getMovies(
+        category: String,
+        page: Int,
+    ): MovieResponseBase {
+        val response = client.get("${BuildConfig.URL_BASE}movie/$category?language=es&page=$page")
         if (response.status == HttpStatusCode.OK) {
             return response.body<MovieResponseBase>()
         } else {

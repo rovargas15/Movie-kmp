@@ -1,5 +1,6 @@
 package detail
 
+import ComposableLifecycle
 import ConfirmRemoveFavoriteDialog
 import LoaderImage
 import androidx.compose.foundation.background
@@ -37,12 +38,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import model.Movie
 import model.MovieDetail
 import model.MovieImage
+import observeLifecycleEvents
 import org.koin.compose.koinInject
 import toDateFormat
 import toHour
@@ -75,8 +80,10 @@ private fun HandleState(
     movieId: Int,
     onBackPress: () -> Unit,
 ) {
-    LaunchedEffect(null) {
-        viewmodel.onLoad(movieId)
+    ComposableLifecycle { _: LifecycleOwner, event: Lifecycle.Event ->
+        if (event == Lifecycle.Event.ON_CREATE) {
+            viewmodel.movieId = movieId
+        }
     }
 
     DisposableEffect(Unit) {
@@ -114,6 +121,7 @@ private fun HandleState(
             )
         }
     }
+    viewmodel.observeLifecycleEvents(lifecycle = LocalLifecycleOwner.current.lifecycle)
 }
 
 @Composable

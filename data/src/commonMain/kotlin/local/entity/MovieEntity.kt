@@ -7,7 +7,7 @@ import model.Movie
 
 @Entity
 data class MovieEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey
     val movieId: Int,
     val category: String,
     val adult: Boolean,
@@ -27,7 +27,7 @@ data class MovieEntity(
 ) {
     fun toDomain() =
         Movie(
-            id = id,
+            id = movieId,
             movieId = movieId,
             adult = adult,
             backdropPath = backdropPath,

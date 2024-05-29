@@ -26,6 +26,7 @@ statelyCommon = "2.0.5"
 ksp = "2.0.0-1.0.21"
 sqlite = "2.5.0-SNAPSHOT"
 skie = "0.8.0"
+pagingCommonVersion = "3.3.0-alpha02-0.5.1"
 
 [libraries]
 image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "imageLoader" }
@@ -66,6 +67,8 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 stately-common = { module = "co.touchlab:stately-common", version.ref = "statelyCommon" }
 
 skie-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+
+paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "pagingCommonVersion" }
 
 
 [plugins]

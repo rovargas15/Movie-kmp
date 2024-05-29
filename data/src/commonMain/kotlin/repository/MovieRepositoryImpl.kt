@@ -18,22 +18,19 @@ class MovieRepositoryImpl(
 ) : BaseRepository(), MovieRepository {
     override suspend fun getMovies(category: String): Result<MovieBase> =
         launchResultSafe {
-            val count = movieDatabase.movieDao().countByCategory(category)
-
-            if (count == 0) {
-                val response = dataSourceRemote.getMovies(category)
-                val moviesResponse = response.results.map { it.toEntity(category) }
-                movieDatabase.movieDao().insertAll(moviesResponse)
-            }
+            val response = dataSourceRemote.getMovies(category)
+            val moviesResponse = response.results.map { it.toEntity(category) }
+            movieDatabase.movieDao().insertAll(moviesResponse)
 
             val movies =
                 movieDatabase.movieDao().getMovieByCategory(category)
                     .map { entityList -> entityList.map { it.toDomain() } }
+
             MovieBase(
-                page = 1,
+                page = response.page,
                 results = movies.first(),
-                totalPages = 1,
-                totalResults = movies.first().size,
+                totalPages = response.totalPages,
+                totalResults = response.totalResults,
             )
         }
 
@@ -76,4 +73,26 @@ class MovieRepositoryImpl(
         val id = movieDatabase.movieDao().updateMovie(movie.isFavorite, movie.id)
         Napier.i("Repository id = $id")
     }
+
+    override suspend fun getPaginatedMovies(
+        category: String,
+        pageSize: Int,
+        page: Int,
+    ): Result<MovieBase> =
+        launchResultSafe {
+            val response = dataSourceRemote.getMovies(category, page)
+            val moviesResponse = response.results.map { it.toEntity(category) }
+            movieDatabase.movieDao().insertAll(moviesResponse)
+
+            /*   val movies =
+                   movieDatabase.movieDao().getMovieByCategory(category)
+                       .map { entityList -> entityList.map { it.toDomain() } }
+             */
+            MovieBase(
+                page = response.page,
+                results = response.results.map { it.toDomain() },
+                totalPages = response.totalPages,
+                totalResults = response.totalResults,
+            )
+        }
 }

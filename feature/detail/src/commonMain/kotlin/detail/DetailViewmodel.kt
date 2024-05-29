@@ -3,6 +3,8 @@ package detail
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,7 +25,8 @@ class DetailViewmodel(
     private val getRemoteMovieById: GetRemoteMovieById,
     private val getMovieImageById: GetMovieImageById,
     private val updateMovie: UpdateMovie,
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
+    var movieId: Int? = null
     private val movieUiState = MutableStateFlow<DetailMovieUiState>(DetailMovieUiState.Init)
 
     var movie: Movie? by mutableStateOf(null)
@@ -38,8 +41,9 @@ class DetailViewmodel(
     val uiState: StateFlow<DetailMovieUiState>
         get() = movieUiState
 
-    fun onLoad(id: Int) {
-        getMovieById(id)
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        movieId?.let { getMovieById(it) }
     }
 
     fun handleAction(action: DetailMovieAction) {
@@ -68,7 +72,7 @@ class DetailViewmodel(
     }
 
     private fun getMovieById(id: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineDispatcher) {
             getLocalMovieById.invoke(id).collect {
                 movie = it
                 it.movieId.let { movieId ->

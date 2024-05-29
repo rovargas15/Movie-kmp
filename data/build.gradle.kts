@@ -73,9 +73,10 @@ kotlin {
             // Log
             implementation(libs.napier)
             // room
-            implementation(libs.androidx.paging.common)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            implementation(libs.paging.compose.common)
         }
 
         iosMain.dependencies {
@@ -143,7 +144,7 @@ room {
 }
 
 dependencies {
-//    add("kspAndroid", libs.androidx.room.compiler)
+    //    add("kspAndroid", libs.androidx.room.compiler)
 //    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 //    add("kspIosX64", libs.androidx.room.compiler)
 //    add("kspIosArm64", libs.androidx.room.compiler)

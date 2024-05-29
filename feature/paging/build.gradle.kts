@@ -1,3 +1,4 @@
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -6,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.compose.compiler)
 }
 
@@ -26,7 +26,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "core"
+            baseName = "paging"
             isStatic = true
         }
     }
@@ -35,41 +35,38 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-            // Koin
-            implementation(libs.koin.android)
-        }
+            implementation(libs.androidx.activity.compose)
 
+            // Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
+
+            implementation(libs.androidx.room.paging)
+        }
         commonMain.dependencies {
-            implementation(projects.data)
             implementation(projects.domain)
             implementation(projects.common)
-            implementation(projects.feature.discover)
-            implementation(projects.feature.detail)
-            implementation(projects.feature.search)
-            implementation(projects.feature.paging)
+            implementation(projects.feature.share)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.animation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             // android jetpack
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.androidx.navigation.compose)
-            // ktor
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.content.negotiation)
-            implementation(libs.ktor.serialization)
-            implementation(libs.ktor.logger)
-            implementation(libs.ktor.client.auth)
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+
+            implementation(libs.paging.compose.common)
+            implementation(libs.kotlinx.coroutines.core)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
             implementation(libs.stately.common)
         }
 
@@ -80,12 +77,28 @@ kotlin {
 }
 
 android {
-    namespace = "com.movie.kmp.core"
+    namespace = "com.movie.kmp.feature.paging"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        compose = true
+    }
+    dependencies {
+        debugImplementation(compose.uiTooling)
     }
 }
 
@@ -95,7 +108,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.movie.kmp"
+            packageName = "com.movie.kmp.paging"
             packageVersion = "1.0.0"
         }
     }

@@ -20,4 +20,10 @@ interface MovieRepository {
     suspend fun getFavoriteMovie(): Flow<List<Movie>>
 
     suspend fun updateMovie(movie: Movie)
+
+    suspend fun getPaginatedMovies(
+        category: String,
+        pageSize: Int,
+        page: Int,
+    ): Result<MovieBase>
 }

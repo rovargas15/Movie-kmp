@@ -17,4 +17,9 @@ val featureSearch =
         includes(dataModule, featureSearchModule)
     }
 
-val koinModules = listOf(featureMovie, featureDetailMovie, featureSearch)
+val featurePaging =
+    module {
+        includes(dataModule, featurePagingModule)
+    }
+
+val koinModules = listOf(featureMovie, featureDetailMovie, featureSearch, featurePaging)

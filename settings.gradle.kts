@@ -19,11 +19,12 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":core")
+include(":common")
 include(":data")
 include(":domain")
 include(":feature:detail")
 include(":feature:discover")
 include(":feature:search")
 include(":feature:share")
-include(":core")
-include(":common")
+include(":feature:paging")

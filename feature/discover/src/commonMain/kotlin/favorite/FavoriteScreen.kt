@@ -41,11 +41,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import model.Movie
 import movies.BottomNavRoute
 import movies.bottomNavItems
+import observeLifecycleEvents
 import org.koin.compose.koinInject
 import toVote
 
@@ -55,6 +57,7 @@ fun ScreenFavorite(
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
+    viewmodel.observeLifecycleEvents(lifecycle = LocalLifecycleOwner.current.lifecycle)
     HandleState(
         viewmodel = viewmodel,
         onSelectMenu = onSelectMenu,
@@ -204,15 +207,15 @@ private fun MoviesList(
 ) {
     if (movies.isEmpty()) {
         Box(
-            modifier = modifier.fillMaxWidth().fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             Text(text = "No Movies")
         }
     } else {
         LazyVerticalStaggeredGrid(
-            modifier = modifier,
-            columns = StaggeredGridCells.Adaptive(200.dp),
+            modifier = modifier.fillMaxSize(),
+            columns = StaggeredGridCells.Fixed(1),
             verticalItemSpacing = 4.dp,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             content = {

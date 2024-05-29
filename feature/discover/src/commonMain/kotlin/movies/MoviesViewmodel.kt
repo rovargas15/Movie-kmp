@@ -6,6 +6,8 @@ import Category.UPCOMING
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,7 +21,7 @@ class MoviesViewmodel(
     private val getMovieByCategory: GetMovieByCategory,
     private val coroutineDispatcher: CoroutineDispatcher,
     val bottomNavRoute: BottomNavRoute,
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
     private val movieUiState = MutableStateFlow<MovieUiState>(MovieUiState.Init)
     val uiState: StateFlow<MovieUiState>
         get() = movieUiState
@@ -56,9 +58,18 @@ class MoviesViewmodel(
             },
         )
 
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        viewModelScope.launch(coroutineDispatcher) {
+            getMovies(POPULAR)
+            getMovies(TOP_RATED)
+            getMovies(UPCOMING)
+        }
+    }
+
     fun managerAction(action: MovieAction) {
         when (action) {
-            MovieAction.CleanStatus -> {
+            MovieAction.Init -> {
                 movieUiState.value = MovieUiState.Init
             }
 
@@ -72,16 +83,12 @@ class MoviesViewmodel(
                 movieUiState.value = MovieUiState.OnShowDetail(action.movie)
             }
 
-            MovieAction.Init -> {
-                viewModelScope.launch(coroutineDispatcher) {
-                    getMovies(POPULAR)
-                    getMovies(TOP_RATED)
-                    getMovies(UPCOMING)
-                }
-            }
-
             MovieAction.OnSearchView -> {
                 movieUiState.value = MovieUiState.OnSearchView
+            }
+
+            is MovieAction.OnPagingView -> {
+                movieUiState.value = MovieUiState.OnPagingView(action.category)
             }
         }
     }

@@ -1,5 +1,8 @@
 package movies
 
+import Category.POPULAR
+import Category.TOP_RATED
+import Category.UPCOMING
 import LoaderImage
 import Loading
 import androidx.compose.foundation.clickable
@@ -37,8 +40,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.movie.kmp.Res
@@ -46,6 +51,7 @@ import com.movie.kmp.title_popular
 import com.movie.kmp.title_top_rated
 import com.movie.kmp.title_upcoming
 import model.Movie
+import observeLifecycleEvents
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -55,12 +61,14 @@ fun ScreenMovies(
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
     onSearchScreen: () -> Unit,
+    onPagingShow: (String) -> Unit,
 ) {
     HandleState(
         viewmodel = viewmodel,
         onSelectMenu = onSelectMenu,
         onViewDetail = onViewDetail,
         onSearchScreen = onSearchScreen,
+        onPagingShow = onPagingShow,
     )
 
     val action: (MovieAction) -> Unit = {
@@ -76,18 +84,30 @@ fun ScreenMovies(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory(stringResource(Res.string.title_popular))
+                TextCategory(
+                    title = stringResource(Res.string.title_popular),
+                    category = POPULAR,
+                    action = action,
+                )
                 MoviesList(
                     movies = viewmodel.moviesPopular,
                     action = action,
                 )
-                TextCategory(stringResource(Res.string.title_top_rated))
+                TextCategory(
+                    title = stringResource(resource = Res.string.title_top_rated),
+                    category = TOP_RATED,
+                    action = action,
+                )
                 MoviesList(
                     movies = viewmodel.moviesTop,
                     action = action,
                 )
 
-                TextCategory(stringResource(Res.string.title_upcoming))
+                TextCategory(
+                    title = stringResource(Res.string.title_upcoming),
+                    category = UPCOMING,
+                    action = action,
+                )
                 MoviesList(
                     movies = viewmodel.moviesUpComing,
                     action = action,
@@ -99,12 +119,28 @@ fun ScreenMovies(
 }
 
 @Composable
-private fun TextCategory(title: String) {
-    Text(
-        modifier = Modifier.padding(start = 10.dp),
-        text = title,
-        style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
-    )
+private fun TextCategory(
+    title: String,
+    category: String,
+    action: (MovieAction) -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier.weight(1f).padding(start = 10.dp),
+            text = title,
+            style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
+        )
+
+        Text(
+            modifier =
+                Modifier.weight(1f).padding(end = 10.dp).clickable {
+                    action.invoke(MovieAction.OnPagingView(category))
+                },
+            text = "All",
+            textAlign = TextAlign.End,
+            style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.Medium),
+        )
+    }
 }
 
 @Composable
@@ -113,10 +149,11 @@ private fun HandleState(
     onSelectMenu: (BottomNavRoute) -> Unit,
     onViewDetail: (Movie) -> Unit,
     onSearchScreen: () -> Unit,
+    onPagingShow: (String) -> Unit,
 ) {
     DisposableEffect(Unit) {
         onDispose {
-            viewmodel.managerAction(MovieAction.CleanStatus)
+            viewmodel.managerAction(MovieAction.Init)
         }
     }
 
@@ -156,7 +193,14 @@ private fun HandleState(
                 onSearchScreen()
             }
         }
+
+        is MovieUiState.OnPagingView -> {
+            LaunchedEffect(Unit) {
+                onPagingShow((state as MovieUiState.OnPagingView).category)
+            }
+        }
     }
+    viewmodel.observeLifecycleEvents(lifecycle = LocalLifecycleOwner.current.lifecycle)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

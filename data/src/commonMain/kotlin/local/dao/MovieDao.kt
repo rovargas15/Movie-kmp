@@ -21,7 +21,7 @@ interface MovieDao {
     @Query("SELECT * FROM MovieEntity WHERE category = :category")
     fun getMovieByCategory(category: String): Flow<List<MovieEntity>>
 
-    @Query("SELECT * FROM MovieEntity WHERE id = :id")
+    @Query("SELECT * FROM MovieEntity WHERE movieId = :id")
     fun getMovieById(id: Int): Flow<MovieEntity>
 
     @Query("SELECT * FROM MovieEntity WHERE isFavorite = true")
@@ -30,7 +30,7 @@ interface MovieDao {
     @Query("SELECT * FROM MovieEntity")
     fun findBySearch(): Flow<List<MovieEntity>>
 
-    @Query("UPDATE MovieEntity SET isFavorite=:isFavorite WHERE id = :id")
+    @Query("UPDATE MovieEntity SET isFavorite=:isFavorite WHERE movieId = :id")
     suspend fun updateMovie(
         isFavorite: Boolean,
         id: Int,

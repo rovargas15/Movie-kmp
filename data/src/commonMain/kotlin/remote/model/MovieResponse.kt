@@ -3,6 +3,7 @@ package remote.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import local.entity.MovieEntity
+import model.Movie
 
 @Serializable
 data class MovieResponse(
@@ -37,9 +38,28 @@ data class MovieResponse(
 ) {
     fun toEntity(category: String) =
         MovieEntity(
-            id = 0,
             movieId = id,
             category = category,
+            adult = adult,
+            backdropPath = backdropPath ?: "",
+            genreIds = genreIds,
+            originalLanguage = originalLanguage,
+            originalTitle = originalTitle,
+            overview = overview,
+            popularity = popularity,
+            posterPath = posterPath ?: "",
+            releaseDate = releaseDate,
+            title = title,
+            video = video,
+            voteAverage = voteAverage,
+            voteCount = voteCount,
+            isFavorite = false,
+        )
+
+    fun toDomain() =
+        Movie(
+            id = id,
+            movieId = id,
             adult = adult,
             backdropPath = backdropPath ?: "",
             genreIds = genreIds,
