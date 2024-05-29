@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import model.Movie
 import usecase.GetPagingMovieByCategory
 
@@ -36,7 +37,7 @@ class PagingViewmodel(
                         }
                     }
                 },
-            ).flow
+            ).flow.flowOn(coroutineDispatcher)
     }
 
     fun handleAction(action: PagingAction) {
