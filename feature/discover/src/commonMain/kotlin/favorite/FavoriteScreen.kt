@@ -38,6 +38,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,12 +69,13 @@ fun ScreenFavorite(
         viewmodel.handleAction(it)
     }
 
+    val movies by rememberSaveable { viewmodel.moviesFavorite }
     TopBarMovie(
         bottomNavRoute = viewmodel.bottomNavRoute,
         content = { paddingValues ->
             MoviesList(
                 modifier = Modifier.padding(paddingValues),
-                movies = viewmodel.moviesFavorite,
+                movies = movies,
                 action = action,
             )
         },

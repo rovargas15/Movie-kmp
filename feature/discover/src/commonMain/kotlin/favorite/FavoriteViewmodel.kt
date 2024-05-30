@@ -22,22 +22,22 @@ class FavoriteViewmodel(
     val bottomNavRoute: BottomNavRoute,
     private val updateMovie: UpdateMovie,
 ) : ViewModel(), DefaultLifecycleObserver {
+
+    init {
+        getMovies()
+    }
+
     private val movieUiState = MutableStateFlow<FavoriteUiState>(FavoriteUiState.Init)
     val uiState: StateFlow<FavoriteUiState>
         get() = movieUiState
 
-    var moviesFavorite by mutableStateOf(listOf<Movie>())
+    var moviesFavorite = mutableStateOf(listOf<Movie>())
         private set
-
-    override fun onCreate(owner: LifecycleOwner) {
-        super.onCreate(owner)
-        getMovies()
-    }
 
     private fun getMovies() {
         viewModelScope.launch(coroutineDispatcher) {
             getFavoriteMovie.invoke().collect {
-                moviesFavorite = it
+                moviesFavorite.value = it
             }
         }
     }

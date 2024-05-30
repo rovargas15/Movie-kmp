@@ -3,11 +3,8 @@ package movies
 import Category.POPULAR
 import Category.TOP_RATED
 import Category.UPCOMING
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,17 +19,26 @@ class MoviesViewmodel(
     private val coroutineDispatcher: CoroutineDispatcher,
     val bottomNavRoute: BottomNavRoute,
 ) : ViewModel(), DefaultLifecycleObserver {
+
+    init {
+        viewModelScope.launch(coroutineDispatcher) {
+            getMovies(POPULAR)
+            getMovies(TOP_RATED)
+            getMovies(UPCOMING)
+        }
+    }
+
     private val movieUiState = MutableStateFlow<MovieUiState>(MovieUiState.Init)
     val uiState: StateFlow<MovieUiState>
         get() = movieUiState
 
-    var moviesPopular by mutableStateOf(listOf<Movie>())
+    var moviesPopular = mutableStateOf(listOf<Movie>())
         private set
 
-    var moviesTop by mutableStateOf(listOf<Movie>())
+    var moviesTop = mutableStateOf(listOf<Movie>())
         private set
 
-    var moviesUpComing by mutableStateOf(listOf<Movie>())
+    var moviesUpComing = mutableStateOf(listOf<Movie>())
         private set
 
     private suspend fun getMovies(category: String) =
@@ -40,15 +46,15 @@ class MoviesViewmodel(
             onSuccess = {
                 when (category) {
                     POPULAR -> {
-                        moviesPopular = it.results
+                        moviesPopular.value = it.results
                     }
 
                     TOP_RATED -> {
-                        moviesTop = it.results
+                        moviesTop.value = it.results
                     }
 
                     UPCOMING -> {
-                        moviesUpComing = it.results
+                        moviesUpComing.value = it.results
                     }
                 }
                 movieUiState.value = MovieUiState.Success
@@ -57,15 +63,6 @@ class MoviesViewmodel(
                 movieUiState.value = MovieUiState.Error
             },
         )
-
-    override fun onCreate(owner: LifecycleOwner) {
-        super.onCreate(owner)
-        viewModelScope.launch(coroutineDispatcher) {
-            getMovies(POPULAR)
-            getMovies(TOP_RATED)
-            getMovies(UPCOMING)
-        }
-    }
 
     fun managerAction(action: MovieAction) {
         when (action) {

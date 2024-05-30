@@ -19,14 +19,17 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import model.Movie
+import observeLifecycleEvents
 import org.koin.compose.koinInject
 import toVote
 
@@ -36,6 +39,10 @@ fun ScreenSearch(
     onBackPress: () -> Unit,
     onViewDetail: (Movie) -> Unit,
 ) {
+    viewmodel.observeLifecycleEvents(lifecycle = LocalLifecycleOwner.current.lifecycle)
+    val query by rememberSaveable { viewmodel.query }
+    val movies by rememberSaveable { viewmodel.movies }
+
     HandleState(
         viewmodel = viewmodel,
         onDetailMovie = onViewDetail,
@@ -53,12 +60,12 @@ fun ScreenSearch(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SearchView(
-                    query = viewmodel.query,
+                    query = query,
                     action = action,
                 )
 
                 MoviesList(
-                    movies = viewmodel.movies,
+                    movies = movies,
                     action = action,
                 )
             }
@@ -72,6 +79,7 @@ private fun HandleState(
     onBackPress: () -> Unit,
     onDetailMovie: (Movie) -> Unit,
 ) {
+
     DisposableEffect(Unit) {
         onDispose {
             viewmodel.handlerAction(SearchAction.CleanStatus)

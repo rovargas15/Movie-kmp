@@ -74,9 +74,9 @@ fun <T : Any> PagingGrid(
                         CircularProgressIndicator(
                             color = Color.Red,
                             modifier =
-                                Modifier.fillMaxWidth(1f)
-                                    .padding(20.dp)
-                                    .wrapContentWidth(Alignment.CenterHorizontally),
+                            Modifier.fillMaxWidth(1f)
+                                .padding(20.dp)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -135,8 +135,8 @@ private fun ErrorView(
 ) {
     Column(
         modifier =
-            modifier.padding(16.dp).onPlaced { _ ->
-            },
+        modifier.padding(16.dp).onPlaced { _ ->
+        },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -149,10 +149,10 @@ private fun ErrorView(
         OutlinedButton(
             onClick = onClickRetry,
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .wrapContentWidth(Alignment.CenterHorizontally),
         ) {
             Text(text = "Try again")
         }

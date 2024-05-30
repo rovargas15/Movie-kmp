@@ -3,6 +3,8 @@ package movies
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,22 +17,22 @@ import usecase.GetSearchMovie
 class SearchViewmodel(
     private val coroutineDispatcher: CoroutineDispatcher,
     private val getSearchMovie: GetSearchMovie,
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
     private val searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Init)
     val uiState: StateFlow<SearchUiState>
         get() = searchUiState
 
-    var movies by mutableStateOf(listOf<Movie>())
+    var movies = mutableStateOf(listOf<Movie>())
         private set
 
-    var query by mutableStateOf("")
+    var query = mutableStateOf("")
         private set
 
     private fun getMoviesByQuery(query: String) {
         viewModelScope.launch(coroutineDispatcher) {
             getSearchMovie.invoke(query).fold(
                 onSuccess = {
-                    movies = it.results.distinctBy { it.movieId }
+                    movies.value = it.results
                 },
                 onFailure = {
                     searchUiState.value = SearchUiState.Error
@@ -49,7 +51,7 @@ class SearchViewmodel(
             }
 
             is SearchAction.QueryMovie -> {
-                query = action.query
+                query.value = action.query
             }
 
             is SearchAction.OnBackPress -> {
@@ -61,7 +63,7 @@ class SearchViewmodel(
             }
 
             is SearchAction.Search -> {
-                getMoviesByQuery(query)
+                getMoviesByQuery(query.value)
             }
         }
     }

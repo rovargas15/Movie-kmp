@@ -5,23 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import app.cash.paging.compose.collectAsLazyPagingItems
 import model.Movie
 import org.koin.compose.koinInject
@@ -33,6 +22,7 @@ fun ScreenPaging(
     onViewDetail: (Movie) -> Unit,
     onBackPress: () -> Unit,
 ) {
+    viewmodel.onLoad(category)
     HandleState(
         viewmodel = viewmodel,
         onViewDetail = onViewDetail,
@@ -44,18 +34,13 @@ fun ScreenPaging(
     }
 
     viewmodel.observeLifecycleEvents(lifecycle = LocalLifecycleOwner.current.lifecycle)
-    ComposableLifecycle { _: LifecycleOwner, event: Lifecycle.Event ->
-        if (event == Lifecycle.Event.ON_CREATE) {
-            viewmodel.onLoad(category)
-        }
-    }
 
     TopBarMovie(
         action = action,
         content = { paddingValues ->
             PagingGrid(
                 modifier = Modifier.padding(paddingValues),
-                data = viewmodel.flow.collectAsLazyPagingItems(),
+                data = viewmodel.result.collectAsLazyPagingItems(),
                 content = {
                     MovieItem(
                         movie = it,
@@ -73,6 +58,7 @@ private fun HandleState(
     onViewDetail: (Movie) -> Unit,
     onBackPress: () -> Unit,
 ) {
+
     DisposableEffect(Unit) {
         onDispose {
             viewmodel.handleAction(PagingAction.Init)

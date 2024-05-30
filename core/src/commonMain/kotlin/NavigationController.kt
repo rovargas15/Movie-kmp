@@ -58,17 +58,17 @@ fun NavGraphBuilder.detail(navController: NavHostController) {
     composable(
         route = "${Router.DETAIL_MOVIE}{${Arg.ID}}",
         arguments =
-            listOf(
-                navArgument(Arg.ID) {
-                    type = NavType.IntType
-                    nullable = false
-                },
-            ),
+        listOf(
+            navArgument(Arg.ID) {
+                type = NavType.IntType
+                nullable = false
+            },
+        ),
     ) {
         ScreenDetailMovie(
             movieId = it.arguments?.getInt(Arg.ID) ?: 0,
             onBackPress = {
-                navController.popBackStack()
+                navController.navigateUp()
             },
         )
     }
@@ -81,7 +81,7 @@ fun NavGraphBuilder.search(navController: NavHostController) {
                 navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
             onBackPress = {
-                navController.popBackStack()
+                navController.navigateUp()
             },
         )
     }
@@ -91,19 +91,19 @@ fun NavGraphBuilder.paging(navController: NavHostController) {
     composable(
         route = "${Router.MOVIE_ALL}{${Arg.CATEGORY}}",
         arguments =
-            listOf(
-                navArgument(Arg.CATEGORY) {
-                    type = NavType.StringType
-                    nullable = false
-                },
-            ),
+        listOf(
+            navArgument(Arg.CATEGORY) {
+                type = NavType.StringType
+                nullable = false
+            },
+        ),
     ) {
         ScreenPaging(
             onViewDetail = {
                 navController.navigate("${Router.DETAIL_MOVIE}${it.id}")
             },
             onBackPress = {
-                navController.popBackStack()
+                navController.navigateUp()
             },
             category = it.arguments?.getString(Arg.CATEGORY) ?: "",
         )
