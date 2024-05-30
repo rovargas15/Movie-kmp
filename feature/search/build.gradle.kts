@@ -42,10 +42,11 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.domain)
+            implementation(projects.common)
             implementation(projects.feature.share)
             implementation(compose.runtime)
-            api(compose.foundation)
-            api(compose.animation)
+            implementation(compose.foundation)
+            implementation(compose.animation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)

@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -143,9 +142,9 @@ private fun MovieItem(
 ) {
     Card(
         modifier =
-            Modifier.padding(start = 10.dp).clickable {
-                action(PagingAction.OnSelectMovie(movie))
-            },
+        Modifier.padding(start = 10.dp).clickable {
+            action(PagingAction.OnSelectMovie(movie))
+        },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())

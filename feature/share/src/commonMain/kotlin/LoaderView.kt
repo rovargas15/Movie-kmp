@@ -1,14 +1,5 @@
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +29,9 @@ fun iconLogo(modifier: Modifier) {
         modifier = modifier,
         tint = Color.Red,
         painter =
-            painterResource(
-                resource = Res.drawable.ic_movie,
-            ),
+        painterResource(
+            resource = Res.drawable.ic_movie,
+        ),
         contentDescription = "Logo",
     )
 }
@@ -78,7 +69,7 @@ fun ErrorDialog(
                         onClick = { onCloseDialog() },
                         modifier = Modifier.align(Alignment.End),
                     ) {
-                        Text(text = "Aceptar", color = Color.White)
+                        Text(text = "Aceptar", style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }

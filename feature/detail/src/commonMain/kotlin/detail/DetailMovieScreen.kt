@@ -4,16 +4,7 @@ import ComposableLifecycle
 import ConfirmRemoveFavoriteDialog
 import LoaderImage
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -24,20 +15,11 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +34,6 @@ import org.koin.compose.koinInject
 import toDateFormat
 import toHour
 import toVote
-import kotlin.math.min
 
 @Composable
 fun ScreenDetailMovie(
@@ -61,17 +42,21 @@ fun ScreenDetailMovie(
     onBackPress: () -> Unit,
 ) {
     HandleState(detailViewmodel, movieId, onBackPress)
-
-    detailViewmodel.movie?.let { movie ->
-        ContentMovieDetail(
-            action = {
-                detailViewmodel.handleAction(it)
-            },
-            movie = movie,
-            movieDetail = detailViewmodel.movieDetail,
-            movieImage = detailViewmodel.movieImage,
-        )
-    }
+    Scaffold(
+        content = { paddingValuest: PaddingValues ->
+            detailViewmodel.movie?.let { movie ->
+                ContentMovieDetail(
+                    modifier = Modifier.padding(paddingValuest),
+                    action = {
+                        detailViewmodel.handleAction(it)
+                    },
+                    movie = movie,
+                    movieDetail = detailViewmodel.movieDetail,
+                    movieImage = detailViewmodel.movieImage,
+                )
+            }
+        },
+    )
 }
 
 @Composable
@@ -126,40 +111,33 @@ private fun HandleState(
 
 @Composable
 private fun ContentMovieDetail(
+    modifier: Modifier,
     action: (DetailMovieAction) -> Unit,
     movie: Movie,
     movieDetail: MovieDetail?,
     movieImage: MovieImage?,
 ) {
-    val scrollState = rememberScrollState()
     Column(
-        modifier = Modifier.verticalScroll(scrollState),
+        modifier = modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box {
             LoaderImage(
                 url = movie.backdropPath,
-                modifier =
-                    Modifier.fillMaxWidth().height(250.dp).graphicsLayer {
-                        alpha = min(1f, 1 - (scrollState.value / 600f))
-                        translationY = -scrollState.value * 0.1f
-                    },
+                modifier = Modifier.fillMaxWidth().height(250.dp),
             )
 
             IconButton(
                 modifier =
-                    Modifier.padding(10.dp).align(Alignment.TopStart).graphicsLayer {
-                        alpha = min(1f, 1 - (scrollState.value / 600f))
-                        translationY = -scrollState.value * 0.1f
-                    },
+                Modifier.padding(10.dp).align(Alignment.TopStart),
                 onClick = {
                     action(DetailMovieAction.OnBackPress)
                 },
             ) {
                 Icon(
                     modifier =
-                        Modifier.size(35.dp)
-                            .background(Color.LightGray.copy(0.2f), shape = CircleShape),
+                    Modifier.size(35.dp)
+                        .background(Color.LightGray.copy(0.2f), shape = CircleShape),
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Volver",
                 )
@@ -182,11 +160,11 @@ private fun ContentMovieDetail(
                 Icon(
                     modifier = Modifier.size(35.dp),
                     imageVector =
-                        if (movie.isFavorite) {
-                            Icons.Filled.Favorite
-                        } else {
-                            Icons.Filled.FavoriteBorder
-                        },
+                    if (movie.isFavorite) {
+                        Icons.Filled.Favorite
+                    } else {
+                        Icons.Filled.FavoriteBorder
+                    },
                     tint = if (movie.isFavorite) Color.Red else Color.Black,
                     contentDescription = "favorite",
                 )
@@ -194,8 +172,8 @@ private fun ContentMovieDetail(
 
             Row(
                 modifier =
-                    Modifier.align(Alignment.CenterStart)
-                        .padding(top = 140.dp, start = 12.dp),
+                Modifier.align(Alignment.CenterStart)
+                    .padding(top = 140.dp, start = 12.dp),
             ) {
                 Box {
                     ElevatedCard(modifier = Modifier.width(150.dp).height(220.dp)) {
@@ -204,11 +182,11 @@ private fun ContentMovieDetail(
                 }
                 Column(
                     modifier =
-                        Modifier.fillMaxWidth().padding(
-                            top = 120.dp,
-                            start = 8.dp,
-                            end = 12.dp,
-                        ),
+                    Modifier.fillMaxWidth().padding(
+                        top = 120.dp,
+                        start = 8.dp,
+                        end = 12.dp,
+                    ),
                 ) {
                     Text(
                         text = movie.title,

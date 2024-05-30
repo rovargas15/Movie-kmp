@@ -66,6 +66,7 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation("io.insert-koin:koin-core-jvm:3.6.0-Beta4")
         }
     }
 }

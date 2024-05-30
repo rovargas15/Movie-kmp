@@ -59,19 +59,23 @@ fun ScreenSearch(
         viewmodel.handlerAction(it)
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        SearchView(
-            query = viewmodel.query,
-            action = action,
-        )
+    Scaffold(
+        content = { paddingValuest: PaddingValues ->
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                SearchView(
+                    query = viewmodel.query,
+                    action = action,
+                )
 
-        MoviesList(
-            movies = viewmodel.movies,
-            action = action,
-        )
-    }
+                MoviesList(
+                    movies = viewmodel.movies,
+                    action = action,
+                )
+            }
+        },
+    )
 }
 
 @Composable
@@ -123,9 +127,9 @@ private fun SearchView(
 
     Card(
         modifier =
-            Modifier.padding(
-                all = 12.dp,
-            ),
+        Modifier.padding(
+            all = 12.dp,
+        ),
         elevation = CardDefaults.cardElevation(8.dp),
     ) {
         OutlinedTextField(
@@ -136,21 +140,21 @@ private fun SearchView(
             modifier = Modifier.fillMaxWidth().padding(5.dp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions =
-                KeyboardActions(
-                    onSearch = {
-                        localSoftwareKeyboardController?.hide()
-                        action(SearchAction.Search)
-                    },
-                ),
+            KeyboardActions(
+                onSearch = {
+                    localSoftwareKeyboardController?.hide()
+                    action(SearchAction.Search)
+                },
+            ),
             singleLine = true,
             trailingIcon = {
                 Icon(
                     Icons.Outlined.Clear,
                     "contentDescription",
                     modifier =
-                        Modifier.padding(4.dp).clickable {
-                            action(SearchAction.QueryMovie(""))
-                        },
+                    Modifier.padding(4.dp).clickable {
+                        action(SearchAction.QueryMovie(""))
+                    },
                 )
             },
             leadingIcon = {
@@ -158,9 +162,9 @@ private fun SearchView(
                     Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     "contentDescription",
                     modifier =
-                        Modifier.clickable {
-                            action(SearchAction.OnBackPress)
-                        },
+                    Modifier.clickable {
+                        action(SearchAction.OnBackPress)
+                    },
                 )
             },
         )
@@ -191,9 +195,9 @@ private fun MovieItem(
 ) {
     ElevatedCard(
         modifier =
-            Modifier.padding(start = 8.dp, end = 8.dp).clickable {
-                action(SearchAction.OnSelectMovie(movie))
-            },
+        Modifier.padding(start = 8.dp, end = 8.dp).clickable {
+            action(SearchAction.OnSelectMovie(movie))
+        },
     ) {
         Row {
             LoaderImage(
