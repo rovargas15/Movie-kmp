@@ -22,13 +22,9 @@ class MovieRepositoryImpl(
             val moviesResponse = response.results.map { it.toEntity(category) }
             movieDatabase.movieDao().insertAll(moviesResponse)
 
-            val movies =
-                movieDatabase.movieDao().getMovieByCategory(category)
-                    .map { entityList -> entityList.map { it.toDomain() } }
-
             MovieBase(
                 page = response.page,
-                results = movies.first(),
+                results = response.results.map { it.toDomain() },
                 totalPages = response.totalPages,
                 totalResults = response.totalResults,
             )
@@ -84,11 +80,6 @@ class MovieRepositoryImpl(
             val response = dataSourceRemote.getMovies(category, page)
             val moviesResponse = response.results.map { it.toEntity(category) }
             movieDatabase.movieDao().insertAll(moviesResponse)
-
-            /*   val movies =
-                   movieDatabase.movieDao().getMovieByCategory(category)
-                       .map { entityList -> entityList.map { it.toDomain() } }
-             */
             MovieBase(
                 page = response.page,
                 results = response.results.map { it.toDomain() },

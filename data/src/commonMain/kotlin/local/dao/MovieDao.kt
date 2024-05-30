@@ -9,10 +9,10 @@ import local.entity.MovieEntity
 
 @Dao
 interface MovieDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: MovieEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(items: List<MovieEntity>)
 
     @Query("SELECT count(*) FROM MovieEntity WHERE category = :category")
