@@ -13,10 +13,8 @@ val LightColorScheme = lightColorScheme(
     secondary = Color(0xFF3700B3), // Azul secundario
     background = Color.White, // Blanco de fondo
     surface = Color.White, // Blanco de superficie
-    onPrimary = Color.White, // Blanco sobre primario
-    onSecondary = Color.White, // Blanco sobre secundario
-    onBackground = Color.Black, // Negro sobre fondo
     onSurface = Color.Black, // Negro sobre superficie
+    onPrimaryContainer = Color.Black, // Negro de texto
     error = Color(0xFFB00020), // Rojo error
 )
 
@@ -26,10 +24,9 @@ val DarkColorScheme = darkColorScheme(
     secondary = Color(0xFF2196F3), // Azul secundario (más brillante)
     background = Color(0xFF303030), // Gris oscuro de fondo
     surface = Color(0xFF202020), // Gris oscuro de superficie
-    onPrimary = Color.White, // Blanco sobre primario
-    onSecondary = Color.White, // Blanco sobre secundario
     onBackground = Color.White, // Blanco sobre fondo
     onSurface = Color.White, // Blanco sobre superficie
+    onPrimaryContainer = Color.White, // Blanco de texto
     error = Color(0xFFEF5350), // Rojo error (más brillante)
 )
 

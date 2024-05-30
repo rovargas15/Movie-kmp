@@ -8,4 +8,5 @@
     <string name="remove_movie_from_favorites_confirmation">Are you sure you want to remove this movie from your favorites?</string>
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
+    <string name="btn_more">Todos</string>
 </resources>
