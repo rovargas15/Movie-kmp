@@ -53,7 +53,7 @@ data class MovieResponse(
             video = video,
             voteAverage = voteAverage,
             voteCount = voteCount,
-            isFavorite = false,
+            isFavorite = 0,
         )
 
     fun toDomain() =

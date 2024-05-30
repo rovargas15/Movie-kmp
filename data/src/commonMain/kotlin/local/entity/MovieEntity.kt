@@ -23,7 +23,7 @@ data class MovieEntity(
     val video: Boolean,
     val voteAverage: Double,
     val voteCount: Int,
-    val isFavorite: Boolean,
+    val isFavorite: Int,
 ) {
     fun toDomain() =
         Movie(
@@ -42,7 +42,7 @@ data class MovieEntity(
             video = video,
             voteAverage = voteAverage,
             voteCount = voteCount,
-            isFavorite = isFavorite,
+            isFavorite = isFavorite == 1,
         )
 }
 
@@ -63,9 +63,5 @@ fun Movie.toEntity() =
         video = video,
         voteAverage = voteAverage,
         voteCount = voteCount,
-        isFavorite = isFavorite,
+        isFavorite = if (isFavorite) 1 else 0,
     )
-
-data class FavoriteMovie(
-    val isFavorite: Boolean,
-)

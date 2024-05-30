@@ -234,9 +234,9 @@ private fun MovieItem(
 ) {
     ElevatedCard(
         modifier =
-            Modifier.padding(start = 8.dp, end = 8.dp).clickable {
-                action(FavoriteAction.OnSelectMovie(movie))
-            },
+        Modifier.padding(start = 8.dp, end = 8.dp).clickable {
+            action(FavoriteAction.OnSelectMovie(movie))
+        },
     ) {
         Row {
             LoaderImage(
@@ -273,7 +273,7 @@ private fun MovieItem(
                     ) {
                         Icon(
                             modifier =
-                                Modifier.size(35.dp),
+                            Modifier.size(35.dp),
                             imageVector = Icons.Filled.Favorite,
                             tint = Color.Red,
                             contentDescription = "favorite",

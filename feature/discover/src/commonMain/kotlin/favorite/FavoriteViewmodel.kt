@@ -7,6 +7,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,8 +38,8 @@ class FavoriteViewmodel(
     private fun getMovies() {
         viewModelScope.launch(coroutineDispatcher) {
             getFavoriteMovie.invoke().collect {
+                Napier.i("movies favorite = $it")
                 moviesFavorite = it
-                movieUiState.value = FavoriteUiState.Success
             }
         }
     }

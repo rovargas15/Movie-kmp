@@ -70,8 +70,9 @@ class MovieRepositoryImpl(
         }
 
     override suspend fun updateMovie(movie: Movie) {
+        Napier.i("updateMovie = $movie")
         val id = movieDatabase.movieDao().updateMovie(movie.isFavorite, movie.id)
-        Napier.i("Repository id = $id")
+        Napier.i("updateMovie id = $id")
     }
 
     override suspend fun getPaginatedMovies(
