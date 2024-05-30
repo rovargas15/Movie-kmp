@@ -1,6 +1,5 @@
 package movies
 
-import Router
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -23,5 +22,5 @@ val bottomNavItems =
             route = Router.FAVORITE,
             icon = Icons.Default.Favorite,
             label = "favorite",
-        )
+        ),
     )
