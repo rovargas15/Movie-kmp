@@ -1,13 +1,9 @@
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -38,16 +34,20 @@ fun ScreenPaging(
     TopBarMovie(
         action = action,
         content = { paddingValues ->
-            PagingGrid(
+            Column(
                 modifier = Modifier.padding(paddingValues),
-                data = viewmodel.result.collectAsLazyPagingItems(),
-                content = {
-                    MovieItem(
-                        movie = it,
-                        action = action,
-                    )
-                },
-            )
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                PagingGrid(
+                    data = viewmodel.result.collectAsLazyPagingItems(),
+                    content = {
+                        MovieItem(
+                            movie = it,
+                            action = action,
+                        )
+                    },
+                )
+            }
         },
     )
 }
