@@ -1,8 +1,6 @@
 package repository
 
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import local.database.MovieDatabase
 import model.Movie
@@ -49,12 +47,9 @@ class MovieRepositoryImpl(
             val moviesResponse = response.results.map { it.toEntity("") }
             movieDatabase.movieDao().insertAll(moviesResponse)
 
-            val movies =
-                movieDatabase.movieDao().getMovieByCategory("")
-                    .map { entityList -> entityList.map { it.toDomain() } }
             MovieBase(
                 page = response.page,
-                results = movies.first(),
+                results = moviesResponse.map { it.toDomain() },
                 totalPages = response.totalResults,
                 totalResults = response.totalResults,
             )
@@ -66,9 +61,7 @@ class MovieRepositoryImpl(
         }
 
     override suspend fun updateMovie(movie: Movie) {
-        Napier.i("updateMovie = $movie")
-        val id = movieDatabase.movieDao().updateMovie(movie.isFavorite, movie.id)
-        Napier.i("updateMovie id = $id")
+        movieDatabase.movieDao().updateMovie(movie.isFavorite, movie.id)
     }
 
     override suspend fun getPaginatedMovies(

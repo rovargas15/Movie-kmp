@@ -30,7 +30,7 @@ fun <T : Any> PagingGrid(
     content: @Composable (T) -> Unit,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(180.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
         modifier = modifier.fillMaxSize(),
@@ -111,7 +111,7 @@ private fun ErrorItem(
     onClickRetry: () -> Unit,
 ) {
     Row(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.fillMaxSize().padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -135,7 +135,7 @@ private fun ErrorView(
 ) {
     Column(
         modifier =
-        modifier.padding(16.dp).onPlaced { _ ->
+        modifier.fillMaxSize().padding(16.dp).onPlaced { _ ->
         },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

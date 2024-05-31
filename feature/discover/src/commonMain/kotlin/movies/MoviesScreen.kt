@@ -281,10 +281,11 @@ private fun MovieItem(
     action: (MovieAction) -> Unit,
 ) {
     Card(
-        modifier =
-        Modifier.padding(start = 10.dp).clickable {
-            action(MovieAction.OnSelectMovie(movie))
-        },
+        modifier = Modifier
+            .size(170.dp, 300.dp)
+            .padding(start = 10.dp).clickable {
+                action(MovieAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())

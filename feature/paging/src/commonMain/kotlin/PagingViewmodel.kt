@@ -1,13 +1,10 @@
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import model.Movie
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import usecase.GetPagingMovieByCategory
 
 class PagingViewmodel(
@@ -19,24 +16,19 @@ class PagingViewmodel(
     val uiState: StateFlow<PagingUiState>
         get() = movieUiState
 
-    var result: Flow<PagingData<Movie>> = flowOf()
-        private set
-
-    fun onLoad(category: String) {
-        result = Pager(
-            config = PagingConfig(pageSize = 1),
-            pagingSourceFactory = {
-                ResultPagingSource { page: Int, _: Int ->
-                    useCase.invoke(
-                        page = page,
-                        category = category,
-                    ).map {
-                        it.results
-                    }
+    fun onLoad(category: String) = Pager(
+        config = PagingConfig(pageSize = 1),
+        pagingSourceFactory = {
+            ResultPagingSource { page: Int, _: Int ->
+                useCase.invoke(
+                    page = page,
+                    category = category,
+                ).map {
+                    it.results
                 }
-            },
-        ).flow.flowOn(coroutineDispatcher)
-    }
+            }
+        },
+    ).flow
 
     fun handleAction(action: PagingAction) {
         when (action) {

@@ -39,7 +39,7 @@ fun ScreenPaging(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 PagingGrid(
-                    data = viewmodel.result.collectAsLazyPagingItems(),
+                    data = viewmodel.onLoad(category).collectAsLazyPagingItems(),
                     content = {
                         MovieItem(
                             movie = it,
@@ -127,10 +127,12 @@ private fun MovieItem(
     action: (PagingAction) -> Unit,
 ) {
     Card(
-        modifier =
-        Modifier.padding(start = 10.dp).clickable {
-            action(PagingAction.OnSelectMovie(movie))
-        },
+        modifier = Modifier
+            .size(170.dp, 300.dp)
+            .padding(start = 10.dp)
+            .clickable {
+                action(PagingAction.OnSelectMovie(movie))
+            },
     ) {
         Box {
             LoaderImage(movie.posterPath, Modifier.fillMaxSize())
