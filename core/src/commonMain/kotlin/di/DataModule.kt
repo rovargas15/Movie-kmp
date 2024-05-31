@@ -2,6 +2,7 @@ package di
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -47,4 +48,4 @@ val dataModule =
         factoryOf(::GetPagingMovieByCategory)
     }
 
-fun coroutineDispatcherProvider(): CoroutineDispatcher = Dispatchers.Default
+fun coroutineDispatcherProvider(): CoroutineDispatcher = Dispatchers.IO
