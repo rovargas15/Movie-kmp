@@ -61,5 +61,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Necesitamos permiso para guardar fotos y videos en tu biblioteca.</string>
+    <key>NSFileProtectionKey</key>
+    <string>NSFileProtectionComplete</string>
+    <key>NSFileProtectionKey</key>
+    <string>NSFileProtectionComplete</string>
 </dict>
 </plist>
